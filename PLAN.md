@@ -141,13 +141,13 @@ Not mandatory — just a way to see the 4-hour budget mapped onto real days.
 | Session | Time | Focus |
 |---|---|---|
 | 1 | 30 min | `dotnet new sln` + both projects, project reference, git init, `.gitignore`, confirm it builds and runs |
-| 2 | 30 min | `Quest`, `GameState`, `GameClock` + rollover logic |
-| 3 | 30 min | `GameEngine` (toggle, full-clear detection, coin award) + JSON load/save |
+| 2 | 45-60 min | `Quest`, `GameState`, `GameClock` + rollover logic + JSON load/save (persistence) |
+| 3 | 30 min | `GameEngine` (toggle, full-clear detection, coin award) |
 | 4 | 30 min | `AsciiArt` + `ConsoleRenderer` |
 | 5 (Fri) | 60 min | Wire up `Program.cs` main loop end-to-end; manually test a full clear and a rollover |
 | 6 | 30 min | Bug fixes, walk the Definition of Done checklist, tag/commit `v0.1` |
 
-Total: ~3.5 hours, leaving a little slack under the 4-hour cap.
+Total: ~3.75-4 hours, at or just under the 4-hour cap.
 
 <hr>
 
