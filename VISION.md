@@ -33,9 +33,9 @@ I want three types of quests:
 The daily quests should be as follows:
 - Food For Thought! | Eat breakfast & dinner
 - Shiny Pearly Whites! | Brush teeth morning & night
-- Buff Pappa | Workout
+- Buff Papaya | Workout
 - Walk For Life | Do 30 min on the treadmill
-- Pretty Boy Pappa | Wash your face
+- Pretty Boy Papaya | Wash your face
 - Smartypants huh? | Study for 15-30min
 - Excellent work, daily cleared! | Finish all of the above quests
 
