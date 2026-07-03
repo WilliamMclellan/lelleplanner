@@ -26,10 +26,26 @@ Files created/modified:
 - PLAN.md
 - SESSIONSUMMARIES.md (this file)
 
-Next steps (Session 2):
-- Implement Core types: Quest.cs, GameState.cs, GameClock.cs
-- Add day-rollover logic (cutover hour = 04:00)
-- Persist GameState as JSON in %APPDATA%\Lelleplanner\gamestate.json
+## Session 2 — 2026-07-03
+Summary: Core types and persistence for the Lelleplanner MVP.
+
+Actions performed:
+- Created Quest.cs: key, title, goal, completed properties with null-check constructor
+- Created GameClock.cs: static utility with GetGameDate() logic (4:00 AM cutover)
+- Created GameState.cs: game date, daily coins, quest list; RolloverIfNeeded() method
+- Created Persistence.cs: static JSON load/save to %APPDATA%\Lelleplanner\gamestate.json
+- Updated VISION.md to standardize quest names ("Buff Papaya", "Pretty Boy Papaya")
+- Confirmed build succeeds
+
+Files created:
+- src\Lelleplanner.Core\Quest.cs
+- src\Lelleplanner.Core\GameClock.cs
+- src\Lelleplanner.Core\GameState.cs
+- src\Lelleplanner.Core\Persistence.cs
+
+Next steps (Session 3):
+- Implement GameEngine.cs: toggle quest, detect full clear, award coin
+- Wire these methods into Program.cs main loop (Session 5)
 
 When ready, run: dotnet build && dotnet run --project src\Lelleplanner.ConsoleApp
 
