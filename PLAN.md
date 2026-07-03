@@ -9,9 +9,9 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: MVP (v0.1) — session 3 complete
+## Status: MVP (v0.1) — session 4 complete
 
-**Progress:** Sessions 1-3 (scaffolding, Core types + persistence, GameEngine) completed; Session 4 (AsciiArt + ConsoleRenderer) is next.
+**Progress:** Sessions 1-4 (scaffolding, Core types + persistence, GameEngine, AsciiArt + ConsoleRenderer) completed; Session 5 (wire up Program.cs main loop end-to-end) is next.
 
 <hr>
 
