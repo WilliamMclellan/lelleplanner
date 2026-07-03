@@ -86,6 +86,36 @@ Next steps (Session 4):
 - Implement AsciiArt.cs (banner + celebration art) and ConsoleRenderer.cs
   (draws banner, quest list, prompts)
 
+## Session 4 — 2026-07-03
+Summary: AsciiArt and ConsoleRenderer for the Lelleplanner MVP, with a project-boundary fix and a couple of real bugs caught along the way.
+
+Actions performed:
+- Created ConsoleRenderer.cs (in Lelleplanner.ConsoleApp) with four static,
+  stateless rendering methods: RenderBanner, RenderQuestList (numbers active
+  quests, tags completed ones as [CLEAR]), RenderDailyClearCelebration, and
+  PromptForQuestNumber
+- Caught and fixed: ConsoleRenderer was initially created inside
+  Lelleplanner.Core, which would have reintroduced console I/O into the
+  console-free Core project; moved it to Lelleplanner.ConsoleApp with the
+  correct namespace
+- Caught and fixed an infinite loop in PromptForQuestNumber (input was only
+  read once, before the retry loop, instead of on every iteration)
+- Removed a dead/no-op "Stop" input check that looked like an unfinished
+  quit feature
+- Replaced a hardcoded quest-count literal in RenderBanner with
+  gameState.Quests.Count()
+- Created AsciiArt.cs with Banner and Celebration ASCII art (raw string
+  literals, plain 7-bit ASCII only for Windows Console compatibility)
+- Confirmed build succeeds with no warnings
+
+Files created:
+- src\Lelleplanner.ConsoleApp\ConsoleRenderer.cs
+- src\Lelleplanner.ConsoleApp\AsciiArt.cs
+
+Next steps (Session 5):
+- Wire GameEngine + ConsoleRenderer + Persistence into Program.cs's main
+  loop end-to-end; manually test a full clear and a rollover
+
 When ready, run: dotnet build && dotnet run --project src\Lelleplanner.ConsoleApp
 
 (Will append a short summary at the end of each completed session.)
