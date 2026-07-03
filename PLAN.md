@@ -9,9 +9,9 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: MVP (v0.1) — session 1 complete
+## Status: MVP (v0.1) — session 2 complete
 
-**Progress:** Session 1 (scaffolding: solution + projects + git) completed; Session 2 (implement Core types + rollover logic) is next.
+**Progress:** Session 1 (scaffolding) and Session 2 (Core types + persistence) completed; Session 3 (GameEngine: toggle + full-clear + coin award) is next.
 
 <hr>
 
