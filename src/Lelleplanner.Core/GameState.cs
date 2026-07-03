@@ -25,7 +25,8 @@ namespace Lelleplanner.Core
                 new Quest("buff-papaya", "Buff Papaya", "Workout!"),
                 new Quest("walk-for-life", "Walk For Life", "30min on the treadmill"),
                 new Quest("pretty-boy-papaya", "Pretty Boy Papaya", "Wash face"),
-                new Quest("smartypants-huh", "Smartypants Huh?", "Study for 30 minutes")
+                new Quest("smartypants-huh", "Smartypants Huh?", "Study for 30 minutes"),
+                new Quest("daily-quest-clear", "Excellent work, daily cleared!", "Clear all 6 daily quests")
             };
             return quests;
         }

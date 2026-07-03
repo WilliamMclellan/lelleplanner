@@ -9,9 +9,9 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: MVP (v0.1) — session 2 complete
+## Status: MVP (v0.1) — session 3 complete
 
-**Progress:** Session 1 (scaffolding) and Session 2 (Core types + persistence) completed; Session 3 (GameEngine: toggle + full-clear + coin award) is next.
+**Progress:** Sessions 1-3 (scaffolding, Core types + persistence, GameEngine) completed; Session 4 (AsciiArt + ConsoleRenderer) is next.
 
 <hr>
 
@@ -41,7 +41,9 @@ full end-state (that's [VISION.md](VISION.md)).
 ### Definition of done
 - [ ] `dotnet run` from a clean checkout shows an ASCII title banner and
       today's 6 quests with their checked/unchecked state
-- [ ] Entering a quest's number toggles it complete/incomplete
+- [ ] Entering a quest's number marks it complete (one-directional — quests
+      only reset via the next game-day rollover, not by re-entering the
+      number)
 - [ ] Completing all 6 triggers the clear celebration and awards exactly
       1 Daily Coin (not repeatable within the same game-day)
 - [ ] Daily Coin balance persists across runs
@@ -86,7 +88,7 @@ lelleplanner/
     │   ├── Quest.cs           # Key, Title, Goal, Completed
     │   ├── GameState.cs       # GameDate, DailyCoins, List<Quest>
     │   ├── GameClock.cs       # "what game-day is it right now"
-    │   └── GameEngine.cs      # toggle quest, detect full clear, rollover
+    │   └── GameEngine.cs      # complete quest, detect full clear, rollover
     └── Lelleplanner.ConsoleApp/
         ├── Program.cs         # composition root + main loop
         ├── ConsoleRenderer.cs # draws banner, quest list, prompts
@@ -115,8 +117,8 @@ later-iteration idea — see the roadmap.
 
 ### Persistence
 Plain JSON, stored outside the repo at
-`%APPDATA%\Lelleplanner\gamestate.json`, so it survives `dotnet run` from any
-working directory and never gets accidentally committed.
+`%LOCALAPPDATA%\Lelleplanner\gamestate.json`, so it survives `dotnet run` from
+any working directory and never gets accidentally committed.
 
 Quests are keyed by a stable string (`"food-for-thought"`, not array index),
 so reordering the hardcoded quest list later can't silently corrupt saved
@@ -142,7 +144,7 @@ Not mandatory — just a way to see the 4-hour budget mapped onto real days.
 |---|---|---|
 | 1 | 30 min | `dotnet new sln` + both projects, project reference, git init, `.gitignore`, confirm it builds and runs |
 | 2 | 45-60 min | `Quest`, `GameState`, `GameClock` + rollover logic + JSON load/save (persistence) |
-| 3 | 30 min | `GameEngine` (toggle, full-clear detection, coin award) |
+| 3 | 30 min | `GameEngine` (complete quest, full-clear detection, coin award) |
 | 4 | 30 min | `AsciiArt` + `ConsoleRenderer` |
 | 5 (Fri) | 60 min | Wire up `Program.cs` main loop end-to-end; manually test a full clear and a rollover |
 | 6 | 30 min | Bug fixes, walk the Definition of Done checklist, tag/commit `v0.1` |
@@ -194,3 +196,7 @@ when we actually get there, not now.
 ## Open questions / parking lot
 - **GUI framework** (iteration 7): WPF vs .NET MAUI vs Avalonia — decide
   closer to the time.
+- **Confirmation prompt on quest completion** (console UI, iteration TBD):
+  since completing a quest is one-directional until the next rollover, a
+  lightweight y/n confirmation could guard against misclicks. Weigh against
+  added friction for a daily-use tool.

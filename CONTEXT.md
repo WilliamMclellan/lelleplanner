@@ -42,7 +42,7 @@ Domain-Driven Design and unit testing, not just to add features.
   duplicate cards.
 - GUI framework choice (iteration 7: WPF / MAUI / Avalonia) is intentionally
   still undecided.
-- State persists as JSON at `%APPDATA%\Lelleplanner\gamestate.json`, not
+- State persists as JSON at `%LOCALAPPDATA%\Lelleplanner\gamestate.json`, not
   inside the repo.
 
 <hr>
