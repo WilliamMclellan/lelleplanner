@@ -9,7 +9,7 @@ namespace Lelleplanner.Core
         public static GameState LoadOrCreate()
         {
             string filename = "gamestate.json";
-            string path = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData ), "Local", "Lelleplanner", filename );
+            string path = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), "Lelleplanner", filename );
             string jsonString = "";
 
             if ( File.Exists( path ) )
@@ -33,16 +33,11 @@ namespace Lelleplanner.Core
         {
             string saveState = JsonSerializer.Serialize<GameState>( gameState );
             string fileName = "gamestate.json";
-            string folderPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData ), "Local", "Lelleplanner" );
+            string folderPath = Path.Combine( Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData ), "Lelleplanner" );
             string filePath = Path.Combine( folderPath, fileName );
             if ( !Directory.Exists( folderPath ) )
             {
                 Directory.CreateDirectory( folderPath );
-            }
-
-            if ( !File.Exists( filePath ) )
-            {
-                File.Create( filePath );
             }
 
             File.WriteAllText(filePath, saveState);

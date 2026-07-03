@@ -47,6 +47,45 @@ Next steps (Session 3):
 - Implement GameEngine.cs: toggle quest, detect full clear, award coin
 - Wire these methods into Program.cs main loop (Session 5)
 
+## Session 3 — 2026-07-03
+Summary: GameEngine for the Lelleplanner MVP, plus a design change and two bug fixes surfaced along the way.
+
+Actions performed:
+- Created GameEngine.cs: `CompleteQuest` (marks a quest complete by key) and
+  `CompleteDailyQuest` (detects all 6 daily quests complete, marks the
+  "Excellent work, daily cleared!" meta-quest complete, and awards exactly
+  one Daily Coin per game-day)
+- Design change: quest completion is one-directional (cleared only by the
+  next game-day rollover), not a toggle — updated PLAN.md's Definition of
+  Done and solution layout comment to match; parked a "confirmation prompt
+  on quest completion" idea for a future console-UI iteration
+- Added the meta-quest as a 7th `Quest` in `GameState.InitializeDefaultQuests()`
+- Fixed a bug in `GameEngine.CompleteDailyQuest`'s full-clear check (was
+  counting non-meta quests instead of checking their `Completed` state) and
+  added a guard against re-awarding the coin on repeated calls
+- Enabled nullable annotations on `FirstOrDefault` results (`Quest?`) to
+  match the project's nullable reference types setting
+- Fixed a bug in `Persistence.Save` where an unclosed `File.Create` stream
+  locked the file and made the following `File.WriteAllText` throw; then
+  simplified by removing the redundant `File.Create` call entirely, since
+  `WriteAllText` creates the file itself
+- Fixed persistence path: corrected `%APPDATA%\Local\...` to
+  `%LOCALAPPDATA%\...`, and updated PLAN.md/CONTEXT.md to match
+- Manually smoke-tested end-to-end: completing all 6 quests, full-clear +
+  coin award, double-award guard, and the Persistence save/load round-trip
+- Confirmed build succeeds with no warnings
+
+Files created/modified:
+- src\Lelleplanner.Core\GameEngine.cs
+- src\Lelleplanner.Core\GameState.cs
+- src\Lelleplanner.Core\Persistence.cs
+- PLAN.md
+- CONTEXT.md
+
+Next steps (Session 4):
+- Implement AsciiArt.cs (banner + celebration art) and ConsoleRenderer.cs
+  (draws banner, quest list, prompts)
+
 When ready, run: dotnet build && dotnet run --project src\Lelleplanner.ConsoleApp
 
 (Will append a short summary at the end of each completed session.)
