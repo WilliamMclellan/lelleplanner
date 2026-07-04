@@ -169,6 +169,27 @@ Next steps (Session 6):
   checklist is already fully checked off as of this session — Session 6 may
   end up being light: a final read-through plus the v0.1 tag/commit)
 
+## Session 6 — 2026-07-04
+Summary: Final read-through and Definition of Done walkthrough for the MVP.
+Confirmed session 5's work holds up end-to-end; no new bugs found. Light
+session, as anticipated.
+
+Actions performed:
+- Confirmed a clean `dotnet build` with 0 warnings/errors
+- Read through every Core and ConsoleApp source file against the DoD
+  checklist in PLAN.md; all items check out against the actual code
+- Ran a smoke test (`dotnet run` piping `0`) to confirm the banner, quest
+  list, and clean exit/save path all still work
+- Updated PLAN.md's status line to "MVP (v0.1) — complete" and pointed
+  "what's next" at iteration 1 (Testing + Weekly quests)
+
+Files created/modified:
+- PLAN.md
+- SESSIONSUMMARIES.md
+
+Next steps: tag/commit `v0.1` (user to do via git), then start iteration 1
+(Testing + Weekly quests) whenever ready.
+
 When ready, run: dotnet build && dotnet run --project src\Lelleplanner.ConsoleApp
 
 (Will append a short summary at the end of each completed session.)

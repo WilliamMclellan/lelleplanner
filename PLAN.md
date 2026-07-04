@@ -9,9 +9,12 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: MVP (v0.1) — session 5 complete
+## Status: MVP (v0.1) — complete
 
-**Progress:** Sessions 1-5 (scaffolding, Core types + persistence, GameEngine, AsciiArt + ConsoleRenderer, Program.cs main loop) completed; Session 6 (bug fixes, walk the Definition of Done checklist, tag/commit v0.1) is next.
+**Progress:** Sessions 1-6 complete (scaffolding, Core types + persistence, GameEngine,
+AsciiArt + ConsoleRenderer, Program.cs main loop, final DoD walkthrough). All Definition
+of Done items are checked off and the build/smoke test are clean — ready to tag `v0.1`.
+Iteration 1 (Testing + Weekly quests, see the roadmap below) is next.
 
 <hr>
 
