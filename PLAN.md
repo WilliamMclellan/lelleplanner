@@ -9,12 +9,10 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: MVP (v0.1) — complete
+## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — session 1 next
 
-**Progress:** Sessions 1-6 complete (scaffolding, Core types + persistence, GameEngine,
-AsciiArt + ConsoleRenderer, Program.cs main loop, final DoD walkthrough). All Definition
-of Done items are checked off and the build/smoke test are clean — ready to tag `v0.1`.
-Iteration 1 (Testing + Weekly quests, see the roadmap below) is next.
+**Progress:** MVP (v0.1) shipped and tagged after session 6. Iteration 1 scope locked
+(see below) — session 1 (scaffold `Lelleplanner.Tests`, first `GameClock` tests) is next.
 
 <hr>
 
@@ -153,6 +151,55 @@ Not mandatory — just a way to see the 4-hour budget mapped onto real days.
 | 6 | 30 min | Bug fixes, walk the Definition of Done checklist, tag/commit `v0.1` |
 
 Total: ~3.75-4 hours, at or just under the 4-hour cap.
+
+<hr>
+
+## Iteration 1 (v0.2): Testing + Weekly Quests
+
+**Budget:** 4-8 hours.
+
+### Scope
+- New `Lelleplanner.Tests` project (xUnit), referencing `Core`
+- Tests for `GameClock.GetGameDate` (cutover-hour boundary, including the
+  month-rollover case that was buggy in session 5) and
+  `GameEngine.CompleteDailyQuest` (full-clear detection + the double-award
+  guard)
+- Weekly quests from VISION.md: `Shiny Sparkly!` (dishes), `Tidy Room, Tidy
+  Mind` (clean a room), and the `Week Survived` meta-quest
+- Weekly Coins: +1 awarded on `Week Survived`
+- A week-boundary rollover, parallel to the day rollover but on a weekly
+  cadence
+
+### Where it'll get interesting
+Daily and weekly rollover will look suspiciously similar (`GameClock` needs
+a "what game-week is it," `GameState` needs a second `RolloverIfNeeded`-
+shaped method, `GameEngine` needs a second full-clear check). That
+duplication is the intended motivation to extract a shared abstraction —
+worth pausing on once the second copy exists, rather than guessing the
+abstraction upfront.
+
+### Suggested session breakdown
+| Session | Focus |
+|---|---|
+| 1 | Scaffold `Lelleplanner.Tests`, wire xUnit + project reference, first `GameClock` tests |
+| 2 | Tests for `GameEngine.CompleteDailyQuest` (full-clear + double-award guard) |
+| 3 | Add Weekly quests + `Week Survived` + `WeeklyCoins` to `GameState`; week rollover logic |
+| 4 | Extract the shared daily/weekly rollover abstraction (once duplication is visible) |
+| 5 | Wire weekly quests into `ConsoleRenderer`/`Program.cs` |
+| 6 (Fri) | Manual test both rollovers, new Definition of Done checklist, tag `v0.2` |
+
+### Definition of done
+- [ ] `dotnet test` runs and passes, covering `GameClock` boundary cases and
+      `GameEngine.CompleteDailyQuest`'s full-clear + double-award guard
+- [ ] Weekly quest list renders alongside daily quests, with its own
+      active/completed display
+- [ ] Completing both weekly quests triggers `Week Survived` and awards
+      exactly 1 Weekly Coin (not repeatable within the same game-week)
+- [ ] Weekly Coin balance persists across runs
+- [ ] On a new game-week, weekly quests auto-reset; daily quests and coins
+      are unaffected by the weekly rollover (and vice versa)
+- [ ] Any duplication between daily/weekly rollover has been resolved via a
+      deliberate shared abstraction, not left copy-pasted
 
 <hr>
 
