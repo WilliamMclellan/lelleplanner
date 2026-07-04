@@ -1,33 +1,70 @@
-﻿using Lelleplanner.Core;
+﻿using Lelleplanner.ConsoleApp;
+using Lelleplanner.Core;
 using System;
 using System.Linq;
 
-Console.WriteLine("Loading old GameState...");
 var gameState = Persistence.LoadOrCreate();
 var gameEngine = new GameEngine();
-Console.WriteLine("Game Date: " + gameState.GameDate.ToString());
-Console.WriteLine("Coins: " + gameState.DailyCoins);
-Console.WriteLine("Quests Completed: " + gameState.Quests.Count(q => q.Completed) + "/" + "7");
-Console.WriteLine("Completing quests...");
-gameEngine.CompleteQuest(gameState, "food-for-thought");
-gameEngine.CompleteQuest(gameState, "shiny-pearly-whites");
-gameEngine.CompleteQuest(gameState, "buff-papaya");
-gameEngine.CompleteQuest(gameState, "walk-for-life");
-gameEngine.CompleteQuest(gameState, "pretty-boy-papaya");
-gameEngine.CompleteQuest(gameState, "smartypants-huh");
-Console.WriteLine("Quests completed!");
-Console.WriteLine("Quests Completed: " + gameState.Quests.Count(q => q.Completed) + "/" + "7");
-gameEngine.CompleteDailyQuest(gameState);
-Console.WriteLine("Daily quest completed! 1x Daily Coin awarded.");
-Console.WriteLine("Current GameState:");
-Console.WriteLine("Game Date: " + gameState.GameDate.ToString());
-Console.WriteLine("Coins: " + gameState.DailyCoins);
-Console.WriteLine("Quests Completed: " + gameState.Quests.Count(q => q.Completed) + "/" + "7");
-Console.WriteLine("Testing if Daily Quest can be completed multiple times...");
-gameEngine.CompleteDailyQuest(gameState);
-Console.WriteLine("Current GameState:");
-Console.WriteLine("Game Date: " + gameState.GameDate.ToString());
-Console.WriteLine("Coins: " + gameState.DailyCoins);
-Console.WriteLine("Quests Completed: " + gameState.Quests.Count(q => q.Completed) + "/" + "7");
-Console.WriteLine("Saving Game...");
-Persistence.Save(gameState);
+var totalQuestList = gameState.Quests.Where(quest => quest.Key != "daily-quest-clear").ToList();
+
+while ( true )
+{
+    var activeQuestList = gameState.Quests
+        .Where(q => !q.Completed && q.Key != "daily-quest-clear")
+        .ToList();
+
+    var completedQuestList = gameState.Quests
+        .Where(q => q.Completed && q.Key != "daily-quest-clear")
+        .ToList();
+
+    ConsoleRenderer.RenderBanner(completedQuestList.Count(), totalQuestList.Count(), gameState.DailyCoins);
+    ConsoleRenderer.RenderQuestList(activeQuestList, completedQuestList);
+
+    if (!gameEngine.HasRemainingQuests(activeQuestList))
+    {
+        Console.WriteLine("You're all done! Amazing work!");
+        Save(gameState);
+        Console.WriteLine("Closing app...");
+        break;
+    }
+
+    int questNumber = ConsoleRenderer.PromptForQuestNumber();
+    while ( !gameEngine.ValidQuestNumber(activeQuestList.Count(), questNumber) && questNumber != 0)
+    {
+        questNumber = ConsoleRenderer.PromptForQuestNumber();
+    }
+
+    if ( gameEngine.ValidQuestNumber(activeQuestList.Count(), questNumber) )
+    {
+        bool? dailyQuestCleared = gameState.Quests.FirstOrDefault(q => q.Key == "daily-quest-clear")?.Completed;
+        gameEngine.CompleteQuest(gameState, activeQuestList[questNumber - 1].Key);
+        ConsoleRenderer.RenderQuestCompleted();
+
+        activeQuestList = gameState.Quests
+            .Where(q => !q.Completed && q.Key != "daily-quest-clear")
+            .ToList();
+
+        if (dailyQuestCleared != null && dailyQuestCleared != true && !gameEngine.HasRemainingQuests(activeQuestList))
+        {
+            gameEngine.CompleteDailyQuest(gameState);
+            ConsoleRenderer.RenderDailyClearCelebration();
+        }
+
+        Save(gameState);
+    }
+
+    if (questNumber == 0)
+    {
+        Save(gameState);
+        Console.WriteLine("Closing app...");
+        break;
+    }
+
+}
+
+static void Save(GameState gameState)
+{
+    Console.WriteLine("Saving...");
+    Persistence.Save(gameState);
+    Console.WriteLine("File Saved!");
+}

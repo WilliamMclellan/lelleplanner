@@ -116,6 +116,59 @@ Next steps (Session 5):
 - Wire GameEngine + ConsoleRenderer + Persistence into Program.cs's main
   loop end-to-end; manually test a full clear and a rollover
 
+## Session 5 — 2026-07-04
+Summary: Wired up Program.cs's main loop end-to-end, closing out the MVP's
+core gameplay flow. Also a working-agreement change: the user now wants to
+write Lelleplanner's application code themselves, with Claude guiding via
+diagnosis and design discussion rather than writing it directly (added to
+CONTEXT.md's working agreements).
+
+Actions performed:
+- Wired the main loop in Program.cs: load state, render banner/quest list
+  each iteration, prompt for a quest number, validate it, complete the
+  chosen quest, detect and celebrate a fresh daily clear, and save
+- Added `GameEngine.HasRemainingQuests` and `GameEngine.ValidQuestNumber` to
+  support the loop's exit and input-validation guard clauses
+- Added `ConsoleRenderer.RenderQuestCompleted` and `AsciiArt.QuestCompleted`
+  for per-quest completion feedback
+- Caught and fixed several bugs surfaced during the build-out:
+  - `GameClock.GetGameDate` constructed the previous day via
+    `new DateOnly(year, month, day - 1)`, which throws on the 1st of any
+    month; replaced with `DateOnly.FromDateTime(now.Date.AddDays(-1))`
+  - `GameState.RolloverIfNeeded` reset quest completion on a new game-day
+    but never updated `GameDate` itself, leaving it permanently stale;
+    fixed to update it once, after the reset, using a cached date value
+  - An early `ValidQuestNumber` draft only accepted input exactly equal to
+    the active-quest count (`> activeQuests || < activeQuests` instead of
+    `< 1`), rejecting every other valid number
+  - The daily-clear path initially called `GameEngine.CompleteQuest` on the
+    meta-quest directly instead of `GameEngine.CompleteDailyQuest`, which
+    would have shown the celebration without ever awarding the Daily Coin
+  - Consolidated duplicated "Saving... / File Saved!" console output into a
+    single `Save` local function in Program.cs (not GameEngine, to keep
+    Console I/O out of Lelleplanner.Core), called after every quest
+    completion and at both exit paths
+- Manually tested end-to-end: a full daily clear (banner, quest list,
+  numbered completion, celebration, coin award) and a day rollover (quests
+  reset, coins untouched) both confirmed working
+- Walked the MVP Definition of Done checklist in PLAN.md — all items now
+  checked off
+
+Files created/modified:
+- src\Lelleplanner.ConsoleApp\Program.cs
+- src\Lelleplanner.Core\GameEngine.cs
+- src\Lelleplanner.Core\GameClock.cs
+- src\Lelleplanner.Core\GameState.cs
+- src\Lelleplanner.ConsoleApp\ConsoleRenderer.cs
+- src\Lelleplanner.ConsoleApp\AsciiArt.cs
+- CONTEXT.md (added the "Claude doesn't write app code" working agreement)
+- PLAN.md
+
+Next steps (Session 6):
+- Bug fixes, walk the Definition of Done checklist, tag/commit v0.1 (DoD
+  checklist is already fully checked off as of this session — Session 6 may
+  end up being light: a final read-through plus the v0.1 tag/commit)
+
 When ready, run: dotnet build && dotnet run --project src\Lelleplanner.ConsoleApp
 
 (Will append a short summary at the end of each completed session.)

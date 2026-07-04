@@ -30,5 +30,21 @@ namespace Lelleplanner.Core
                 }
             }
         }
+
+        public bool HasRemainingQuests(List<Quest> activeQuestList)
+        {
+            if (!activeQuestList.Any())
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool ValidQuestNumber(int activeQuests, int questNumber)
+        {
+            if (questNumber > activeQuests || questNumber < 1)
+                return false;
+            return true;
+        }
     }
 }

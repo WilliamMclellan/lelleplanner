@@ -56,6 +56,13 @@ Domain-Driven Design and unit testing, not just to add features.
 - This is a personal-motivation project (see VISION.md's Introduction) —
   keep collaboration practical and encouraging. No need to dwell on that
   context beyond what's already written there.
+- **Claude should not write application code directly** (Program.cs, Core
+  classes, bug fixes, etc.) — the user wants to write the code themselves so
+  they're the one learning. Claude's role here is to diagnose issues, explain
+  the fix or design in prose, point at the exact file/line, and review what
+  the user writes — not to produce diffs via Edit/Write for source files.
+  (Docs like PLAN.md/CONTEXT.md/SESSIONSUMMARIES.md are fine for Claude to
+  update directly.)
 
 <hr>
 

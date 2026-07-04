@@ -2,6 +2,7 @@
 {
     public static class AsciiArt
     {
+        public static string Separator = "===|==|==|==|==|==|==|==|==|======|==|==|==|==|==|==|==|===";
         public const string Banner = """
 ============================================================
 ||                                                        ||
@@ -26,5 +27,12 @@
         *  ALL DAILY QUESTS CLEARED!  *
               +1 Daily Coin!
 """;
+        public static string QuestCompleted = """
+            ============================================================
+            ||                                                        ||
+            ||                    QUEST COMPLETED!                    ||
+            ||                                                        ||
+            ============================================================
+            """;
     }
 }

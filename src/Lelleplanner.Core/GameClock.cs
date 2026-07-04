@@ -7,12 +7,10 @@ namespace Lelleplanner.Core
         private const int CutoverHour = 4;
 
         public static DateOnly GetGameDate(DateTime now)
-        { 
-            if ( now.Hour < CutoverHour)
-            {
-                return new DateOnly(now.Year, now.Month, now.Day - 1);
-            }
-            return new DateOnly(now.Year, now.Month, now.Day);
+        {
+            return now.Hour < CutoverHour
+                ? DateOnly.FromDateTime(now.Date.AddDays(-1))
+                : DateOnly.FromDateTime(now.Date);
         }
 
         public static DateOnly GetGameDate()

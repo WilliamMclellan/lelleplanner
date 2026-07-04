@@ -33,12 +33,14 @@ namespace Lelleplanner.Core
 
         public void RolloverIfNeeded()
         {
-            if ( GameDate != GameClock.GetGameDate() )
+            var currentGameDate = GameClock.GetGameDate();
+            if ( GameDate != currentGameDate )
             {
                 foreach (Quest quest in Quests)
                 {
                     quest.Completed = false;
                 }
+                GameDate = currentGameDate;
             }
         }
     }
