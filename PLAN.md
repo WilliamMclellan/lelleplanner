@@ -9,9 +9,9 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: MVP (v0.1) — session 4 complete
+## Status: MVP (v0.1) — session 5 complete
 
-**Progress:** Sessions 1-4 (scaffolding, Core types + persistence, GameEngine, AsciiArt + ConsoleRenderer) completed; Session 5 (wire up Program.cs main loop end-to-end) is next.
+**Progress:** Sessions 1-5 (scaffolding, Core types + persistence, GameEngine, AsciiArt + ConsoleRenderer, Program.cs main loop) completed; Session 6 (bug fixes, walk the Definition of Done checklist, tag/commit v0.1) is next.
 
 <hr>
 
@@ -39,17 +39,17 @@ full end-state (that's [VISION.md](VISION.md)).
 - Anything GUI — console only for now
 
 ### Definition of done
-- [ ] `dotnet run` from a clean checkout shows an ASCII title banner and
+- [x] `dotnet run` from a clean checkout shows an ASCII title banner and
       today's 6 quests with their checked/unchecked state
-- [ ] Entering a quest's number marks it complete (one-directional — quests
+- [x] Entering a quest's number marks it complete (one-directional — quests
       only reset via the next game-day rollover, not by re-entering the
       number)
-- [ ] Completing all 6 triggers the clear celebration and awards exactly
+- [x] Completing all 6 triggers the clear celebration and awards exactly
       1 Daily Coin (not repeatable within the same game-day)
-- [ ] Daily Coin balance persists across runs
-- [ ] Quest state persists across runs within the same game-day
-- [ ] On a new game-day, quests auto-reset to unchecked; coins are untouched
-- [ ] State lives in the user's AppData folder as JSON, not inside the repo
+- [x] Daily Coin balance persists across runs
+- [x] Quest state persists across runs within the same game-day
+- [x] On a new game-day, quests auto-reset to unchecked; coins are untouched
+- [x] State lives in the user's AppData folder as JSON, not inside the repo
 
 <hr>
 
