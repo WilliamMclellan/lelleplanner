@@ -14,13 +14,15 @@ Domain-Driven Design and unit testing, not just to add features.
 
 <hr>
 
-## Where things stand (as of 2026-07-03)
-- **Planning only — no code written yet.** VISION.md and PLAN.md exist; the
-  .NET solution hasn't been scaffolded.
+## Where things stand (as of 2026-07-04)
+- **MVP (v0.1) shipped and tagged.** Daily quests, Daily Coins, day rollover,
+  console UI, and JSON persistence are all working end-to-end.
+- Now starting **Iteration 1 (v0.2): Testing + Weekly Quests** — scope and
+  session breakdown are locked in PLAN.md.
 - Repo folder name: `lelleplanner` (on this machine:
-  `C:\Users\william.mclellan\source\repos\lelleplanner`)
-- **Not yet a git repository.** No `git init` has been run and there's no
-  remote. See "Before you continue elsewhere" below.
+  `C:\Users\William\repos\lelleplanner`)
+- Git repository with a GitHub remote (`origin`); each session's work lands
+  on its own branch and merges via PR into `master`.
 
 <hr>
 
@@ -67,15 +69,14 @@ Domain-Driven Design and unit testing, not just to add features.
 <hr>
 
 ## Next step
-Scaffold the MVP solution — PLAN.md's "Suggested session breakdown,"
-session 1: `dotnet new sln`, add `Lelleplanner.Core` (classlib) and
-`Lelleplanner.ConsoleApp` (console), wire up the project reference,
-`git init` + `.gitignore`, confirm a clean build and run.
+Iteration 1, session 1 — PLAN.md's "Suggested session breakdown": scaffold
+`Lelleplanner.Tests` (xUnit), reference `Core`, and write the first
+`GameClock.GetGameDate` tests (cutover-hour boundary + the month-rollover
+edge case).
 
 <hr>
 
 ## Before you continue elsewhere
-This folder has never been committed to git, so nothing here syncs
-automatically. Before switching machines, make sure `VISION.md`, `PLAN.md`,
-and this file actually exist on the other one — whether that's by pushing
-this folder to a remote (GitHub, Azure DevOps, etc.) or copying it manually.
+This repo has a GitHub remote (`origin`) and `master` is up to date through
+the `v0.1` tag. `git clone` the remote on another machine to pick up where
+this left off.
