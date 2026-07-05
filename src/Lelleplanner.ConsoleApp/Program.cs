@@ -4,7 +4,6 @@ using System;
 using System.Linq;
 
 var gameState = Persistence.LoadOrCreate();
-var gameEngine = new GameEngine();
 var totalQuestList = gameState.Quests.Where(quest => quest.Key != "daily-quest-clear").ToList();
 
 while ( true )
@@ -20,7 +19,7 @@ while ( true )
     ConsoleRenderer.RenderBanner(completedQuestList.Count(), totalQuestList.Count(), gameState.DailyCoins);
     ConsoleRenderer.RenderQuestList(activeQuestList, completedQuestList);
 
-    if (!gameEngine.HasRemainingQuests(activeQuestList))
+    if (!GameEngine.HasRemainingQuests(activeQuestList))
     {
         Console.WriteLine("You're all done! Amazing work!");
         Save(gameState);
@@ -29,24 +28,24 @@ while ( true )
     }
 
     int questNumber = ConsoleRenderer.PromptForQuestNumber();
-    while ( !gameEngine.ValidQuestNumber(activeQuestList.Count(), questNumber) && questNumber != 0)
+    while (!GameEngine.ValidQuestNumber(activeQuestList.Count(), questNumber) && questNumber != 0)
     {
         questNumber = ConsoleRenderer.PromptForQuestNumber();
     }
 
-    if ( gameEngine.ValidQuestNumber(activeQuestList.Count(), questNumber) )
+    if (GameEngine.ValidQuestNumber(activeQuestList.Count(), questNumber))
     {
         bool? dailyQuestCleared = gameState.Quests.FirstOrDefault(q => q.Key == "daily-quest-clear")?.Completed;
-        gameEngine.CompleteQuest(gameState, activeQuestList[questNumber - 1].Key);
+        GameEngine.CompleteQuest(gameState, activeQuestList[questNumber - 1].Key);
         ConsoleRenderer.RenderQuestCompleted();
 
         activeQuestList = gameState.Quests
             .Where(q => !q.Completed && q.Key != "daily-quest-clear")
             .ToList();
 
-        if (dailyQuestCleared != null && dailyQuestCleared != true && !gameEngine.HasRemainingQuests(activeQuestList))
+        if (dailyQuestCleared != null && dailyQuestCleared != true && !GameEngine.HasRemainingQuests(activeQuestList))
         {
-            gameEngine.CompleteDailyQuest(gameState);
+            GameEngine.CompleteDailyQuest(gameState);
             ConsoleRenderer.RenderDailyClearCelebration();
         }
 
