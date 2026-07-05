@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lelleplanner.Core
 {
-    public class GameEngine
+    public static class GameEngine
     {
-        public void CompleteQuest( GameState gameState, string questKey )
+        public static void CompleteQuest( GameState gameState, string questKey )
         {
             Quest? quest = gameState.Quests.FirstOrDefault(q => q.Key == questKey );
             if ( quest != null)
@@ -17,7 +14,7 @@ namespace Lelleplanner.Core
             }
         }
 
-        public void CompleteDailyQuest( GameState gameState )
+        public static void CompleteDailyQuest( GameState gameState )
         {
 
             if ( gameState.Quests.Where(q => q.Key != "daily-quest-clear" ).All(q => q.Completed ) )
@@ -31,7 +28,7 @@ namespace Lelleplanner.Core
             }
         }
 
-        public bool HasRemainingQuests(List<Quest> activeQuestList)
+        public static bool HasRemainingQuests(List<Quest> activeQuestList)
         {
             if (!activeQuestList.Any())
             {
@@ -40,7 +37,7 @@ namespace Lelleplanner.Core
             return true;
         }
 
-        public bool ValidQuestNumber(int activeQuests, int questNumber)
+        public static bool ValidQuestNumber(int activeQuests, int questNumber)
         {
             if (questNumber > activeQuests || questNumber < 1)
                 return false;
