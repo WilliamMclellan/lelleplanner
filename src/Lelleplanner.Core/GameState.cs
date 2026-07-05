@@ -7,14 +7,21 @@ namespace Lelleplanner.Core
     public class GameState
     {
         public DateOnly GameDate { get; set; }
+        public DateOnly WeekStartDate { get; set; }
+
         public int DailyCoins { get; set; }
+        public int WeeklyCoins { get; set; }
         public List<Quest> Quests { get; set; }
+        public List<Quest> WeeklyQuests { get; set; }
 
         public GameState()
         {
             GameDate = GameClock.GetGameDate();
+            WeekStartDate = GameClock.GetGameWeekStart();
             DailyCoins = 0;
+            WeeklyCoins = 0;
             Quests = InitializeDefaultQuests();
+            WeeklyQuests = InitializeWeeklyQuests();
         }
 
         private List<Quest> InitializeDefaultQuests()
@@ -28,6 +35,18 @@ namespace Lelleplanner.Core
                 new Quest("smartypants-huh", "Smartypants Huh?", "Study for 30 minutes"),
                 new Quest("daily-quest-clear", "Excellent work, daily cleared!", "Clear all 6 daily quests")
             };
+
+            return quests;
+        }
+
+        private List<Quest> InitializeWeeklyQuests()
+        {
+            List<Quest> quests = new List<Quest>{
+                new Quest("tidy-room-tidy-mind", "Tidy Room, Tidy Mind", "Clean a room"),
+                new Quest("shiny-sparkly", "Shiny Sparkly!", "Do the dishes"),
+                new Quest("weekly-quest-clear", "Look at you go, weekly cleared!", "Clear both weekly quests")
+            };
+
             return quests;
         }
 
@@ -41,6 +60,19 @@ namespace Lelleplanner.Core
                     quest.Completed = false;
                 }
                 GameDate = currentGameDate;
+            }
+        }
+
+        public void WeeklyRolloverIfNeeded()
+        {
+            var currentWeekStartDate = GameClock.GetGameWeekStart();
+            if (WeekStartDate != currentWeekStartDate)
+            {
+                foreach (Quest quest in WeeklyQuests)
+                {
+                    quest.Completed = false;
+                }
+                WeekStartDate = currentWeekStartDate;
             }
         }
     }
