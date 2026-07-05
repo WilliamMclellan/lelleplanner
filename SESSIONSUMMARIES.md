@@ -192,4 +192,59 @@ Next steps: tag/commit `v0.1` (user to do via git), then start iteration 1
 
 When ready, run: dotnet build && dotnet run --project src\Lelleplanner.ConsoleApp
 
+## Session 7 — 2026-07-04
+Summary: Scaffolded the test project to kick off Iteration 1.
+
+Actions performed:
+- Created `Lelleplanner.Tests` (xUnit), referencing `Lelleplanner.Core`
+- Added the project to `Lelleplanner.sln`
+- Wrote `GameClockTests.cs`: a `[Theory]`-driven test covering `GameClock.GetGameDate`'s
+  cutover-hour boundary, including the month/year-rollover edge cases (e.g. Jan 1st
+  before cutover correctly resolving to Dec 31st of the prior year)
+- Updated PLAN.md and CONTEXT.md to reflect Iteration 1 starting
+
+Files created/modified:
+- src\Lelleplanner.Tests\Lelleplanner.Tests.csproj
+- src\Lelleplanner.Tests\GameClockTests.cs
+- Lelleplanner.sln
+- PLAN.md
+- CONTEXT.md
+
+Next steps (Session 8): tests for `GameEngine.CompleteDailyQuest` (full-clear
+detection + double-award guard).
+
+## Session 8 — 2026-07-05
+Summary: Tests for `GameEngine.CompleteDailyQuest`, plus a design cleanup surfaced
+along the way — `GameEngine` held no instance state, so it was converted to a
+static class to match `GameClock`'s pattern.
+
+Actions performed:
+- Converted `GameEngine` from an instance class to `static`, along with all four
+  of its methods (`CompleteQuest`, `CompleteDailyQuest`, `HasRemainingQuests`,
+  `ValidQuestNumber`)
+- Updated `Program.cs`: removed `var gameEngine = new GameEngine();` and switched
+  every call site to the static form (`GameEngine.MethodName(...)`)
+- Wrote `GameEngineTests.cs` with three cases for `CompleteDailyQuest`:
+  - `GiveDailyCoin` — completing all 6 non-meta quests awards exactly 1 Daily
+    Coin and flips the `daily-quest-clear` meta-quest to `Completed`
+  - `NoDoubleReward` — calling `CompleteDailyQuest` twice in a row after a full
+    clear leaves `DailyCoins` at 1, not 2 (the double-award guard)
+  - `NotDoneYet` — leaving one non-meta quest incomplete keeps `DailyCoins` at 0
+    and the meta-quest `Completed` at `false`
+- Confirmed `dotnet build` (full solution) and `dotnet test` both pass clean —
+  8 tests total (5 `GameClock` + 3 `GameEngine`)
+- Updated PLAN.md: checked off the `dotnet test` Definition-of-Done item for
+  Iteration 1 and moved "what's next" to session 3
+
+Files created/modified:
+- src\Lelleplanner.Core\GameEngine.cs
+- src\Lelleplanner.ConsoleApp\Program.cs
+- src\Lelleplanner.Tests\GameEngineTests.cs
+- PLAN.md
+- SESSIONSUMMARIES.md
+
+Next steps (Session 3 of Iteration 1): add the Weekly quests (`Shiny Sparkly!`,
+`Tidy Room, Tidy Mind`) and the `Week Survived` meta-quest, `WeeklyCoins` on
+`GameState`, and week-boundary rollover logic.
+
 (Will append a short summary at the end of each completed session.)

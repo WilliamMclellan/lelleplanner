@@ -9,10 +9,15 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — session 1 next
+## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — session 3 next
 
-**Progress:** MVP (v0.1) shipped and tagged after session 6. Iteration 1 scope locked
-(see below) — session 1 (scaffold `Lelleplanner.Tests`, first `GameClock` tests) is next.
+**Progress:** MVP (v0.1) shipped and tagged after session 6. Session 7 scaffolded
+`Lelleplanner.Tests` (xUnit) with `GameClock.GetGameDate` boundary tests. Session 8
+added `GameEngine.CompleteDailyQuest` tests (full-clear + coin award, double-award
+guard, partial-completion) and, as a design cleanup surfaced along the way, converted
+`GameEngine` to a static class (it held no instance state) — call sites in
+`Program.cs` updated to match. Session 3 (Weekly quests + `Week Survived` +
+`WeeklyCoins` + week rollover) is next.
 
 <hr>
 
@@ -189,7 +194,7 @@ abstraction upfront.
 | 6 (Fri) | Manual test both rollovers, new Definition of Done checklist, tag `v0.2` |
 
 ### Definition of done
-- [ ] `dotnet test` runs and passes, covering `GameClock` boundary cases and
+- [x] `dotnet test` runs and passes, covering `GameClock` boundary cases and
       `GameEngine.CompleteDailyQuest`'s full-clear + double-award guard
 - [ ] Weekly quest list renders alongside daily quests, with its own
       active/completed display
