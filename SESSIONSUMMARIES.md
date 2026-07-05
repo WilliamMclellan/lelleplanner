@@ -247,4 +247,45 @@ Next steps (Session 3 of Iteration 1): add the Weekly quests (`Shiny Sparkly!`,
 `Tidy Room, Tidy Mind`) and the `Week Survived` meta-quest, `WeeklyCoins` on
 `GameState`, and week-boundary rollover logic.
 
+## Session 9 — 2026-07-05
+Summary: Iteration 1 session 3 — Weekly quests, `WeeklyCoins`, and week rollover,
+built as a deliberate mirror of the existing daily machinery rather than sharing
+code yet (the duplication is intentional; extracting it is session 4).
+
+Actions performed:
+- Added `GameClock.GetGameWeekStart`, derived from `GetGameDate` (not raw
+  `DateTime`) so it inherits cutover-hour handling for free; added three
+  `[Fact]` tests in `GameClockTests.cs` covering before-cutover (previous
+  week), at-cutover-on-a-Monday (new week), and a mid-week (Wednesday) case
+  that exercises walking back to the correct Monday
+- Added to `GameState`: `WeekStartDate`, `WeeklyCoins`, `WeeklyQuests`,
+  `InitializeWeeklyQuests()` (`shiny-sparkly`, `tidy-room-tidy-mind`, and a
+  `weekly-quest-clear` meta-quest), and `WeeklyRolloverIfNeeded()` — a parallel
+  structure to the existing daily members, not a shared abstraction
+- Added `GameEngine.CompleteWeeklyQuest`, a direct structural copy of
+  `CompleteDailyQuest` operating on `WeeklyQuests`/`WeeklyCoins`
+- Wired `WeeklyRolloverIfNeeded()` into both `Persistence.LoadOrCreate` call
+  sites, alongside the existing `RolloverIfNeeded()` calls
+- Caught and fixed a copy-paste bug: the weekly meta-quest's title initially
+  read "Excellent work, daily cleared!" (copied from the daily meta-quest)
+  instead of a weekly-specific message
+- Confirmed `dotnet build` (0 warnings/errors) and `dotnet test` (11 passed)
+  after each round of changes
+
+Files created/modified:
+- src\Lelleplanner.Core\GameClock.cs
+- src\Lelleplanner.Core\GameState.cs
+- src\Lelleplanner.Core\GameEngine.cs
+- src\Lelleplanner.Core\Persistence.cs
+- src\Lelleplanner.Tests\GameClockTests.cs
+- PLAN.md
+- CONTEXT.md
+
+Not yet done (by design — later sessions): weekly quests aren't wired into
+`ConsoleRenderer`/`Program.cs` (session 5), and no automated tests exist yet
+for `GameEngine.CompleteWeeklyQuest` or `GameState.WeeklyRolloverIfNeeded`.
+
+Next steps (Session 4 of Iteration 1): extract the shared daily/weekly
+rollover abstraction now that both copies exist side by side.
+
 (Will append a short summary at the end of each completed session.)

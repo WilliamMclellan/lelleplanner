@@ -9,15 +9,19 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — session 3 next
+## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — session 4 next
 
 **Progress:** MVP (v0.1) shipped and tagged after session 6. Session 7 scaffolded
 `Lelleplanner.Tests` (xUnit) with `GameClock.GetGameDate` boundary tests. Session 8
 added `GameEngine.CompleteDailyQuest` tests (full-clear + coin award, double-award
 guard, partial-completion) and, as a design cleanup surfaced along the way, converted
 `GameEngine` to a static class (it held no instance state) — call sites in
-`Program.cs` updated to match. Session 3 (Weekly quests + `Week Survived` +
-`WeeklyCoins` + week rollover) is next.
+`Program.cs` updated to match. Session 9 (iteration session 3) added
+`GameClock.GetGameWeekStart`, `GameState.WeeklyQuests`/`WeeklyCoins`/
+`WeekStartDate`/`WeeklyRolloverIfNeeded`, and `GameEngine.CompleteWeeklyQuest` —
+deliberately mirroring the daily equivalents rather than sharing code yet. Session 4
+(extract the shared daily/weekly rollover abstraction, now that both copies exist)
+is next.
 
 <hr>
 

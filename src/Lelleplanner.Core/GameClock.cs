@@ -17,5 +17,17 @@ namespace Lelleplanner.Core
         {
             return GetGameDate(DateTime.Now);
         }
+
+        public static DateOnly GetGameWeekStart(DateTime now)
+        {
+            var gameDate = GetGameDate(now);
+            int daysSinceMonday = ((int)gameDate.DayOfWeek + 6) % 7;
+            return gameDate.AddDays(-daysSinceMonday);
+        }
+
+        public static DateOnly GetGameWeekStart()
+        {
+            return GetGameWeekStart(DateTime.Now);
+        }
     }
 }
