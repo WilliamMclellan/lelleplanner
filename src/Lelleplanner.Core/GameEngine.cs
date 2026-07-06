@@ -8,7 +8,9 @@ namespace Lelleplanner.Core
     {
         public static void CompleteQuest(GameState gameState, string questKey)
         {
-            Quest? quest = gameState.DailyQuests.FirstOrDefault(q => q.Key == questKey);
+            Quest? quest = gameState.DailyQuests.FirstOrDefault(q => q.Key == questKey)
+                ?? gameState.WeeklyQuests.FirstOrDefault(q => q.Key == questKey);
+
             if ( quest != null)
             {
                 quest.Completed = true;

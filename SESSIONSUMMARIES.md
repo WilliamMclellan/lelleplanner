@@ -329,4 +329,68 @@ Files created/modified:
 Next steps (Session 5 of Iteration 1): wire weekly quests into
 `ConsoleRenderer`/`Program.cs`.
 
+## Session 11 — 2026-07-06
+Summary: Iteration 1 session 5 — wired weekly quests into the console UI
+alongside daily quests, and caught two real bugs via manual smoke-testing
+(with save-file backup/restore around each test run, to avoid corrupting
+real progress).
+
+Actions performed:
+- `Program.cs`: built `activeDailyQuestList`/`activeWeeklyQuestList` (and
+  their completed counterparts) each loop iteration, then combined the two
+  active lists (and the two completed lists) into single `[Daily]`/`[Weekly]`-
+  tagged lists (`List<(Quest Quest, string Label)>`) via `Select` + `Concat` —
+  one continuously-numbered list drives both the on-screen rendering and the
+  numeric quest-selection lookup, so display order and lookup order can't
+  drift apart
+- `ConsoleRenderer.RenderQuestList`: updated to accept the tagged tuple lists
+  and print each quest's label next to its title
+- `ConsoleRenderer.RenderBanner`: added weekly coin/progress parameters and a
+  second output line alongside the existing daily one
+- Added `AsciiArt.WeeklyCelebration` (a trophy, mirroring the daily bell art)
+  and `ConsoleRenderer.RenderWeeklyClearCelebration`, wired into `Program.cs`
+  alongside the existing daily clear-celebration call
+- Caught and fixed a bug where the retry-loop input-validation check used
+  `activeDailyQuestList.Count()` instead of the combined `activeQuestList
+  .Count()`, which would have rejected valid quest numbers pointing at
+  weekly quests
+- Caught and fixed a bug where the daily/weekly clear-detection checks in the
+  main loop read `activeDailyQuestList`/`activeWeeklyQuestList` from *before*
+  the current action's `GameEngine.CompleteQuest` call, instead of
+  recomputing them afterward — meaning the "did this just clear everything"
+  check was always one action behind
+- Caught and fixed a deeper bug in `GameEngine.CompleteQuest`: it only ever
+  searched `gameState.DailyQuests` for the given key, so completing any
+  weekly quest silently no-op'd. Fixed with a null-coalescing fallback:
+  `gameState.DailyQuests.FirstOrDefault(...) ?? gameState.WeeklyQuests
+  .FirstOrDefault(...)`
+- Manually smoke-tested the full weekly-clear path end-to-end (with the real
+  save file backed up and restored around each run): completing both weekly
+  quests correctly triggered `Week Survived`, awarded exactly 1 Weekly Coin,
+  and showed the weekly celebration only once, at the right moment
+- Confirmed `dotnet build` (0 warnings/errors) and `dotnet test` (11 passed)
+  throughout
+- Checked off PLAN.md's three remaining Weekly-Quests Definition-of-Done
+  items (list renders alongside daily, `Week Survived` awards exactly 1
+  Weekly Coin, balance persists)
+
+Note for next real play session: the real save file still has one
+pre-existing inconsistency predating this session's fixes (all 6 daily
+quests marked complete, but `daily-quest-clear` never flagged, from before
+the recompute-timing fix existed) — the next quest completed in real
+gameplay will trigger one unexpected "ALL DAILY QUESTS CLEARED!" catch-up and
+Daily Coin. Expected and self-healing, not a new bug.
+
+Files created/modified:
+- src\Lelleplanner.ConsoleApp\Program.cs
+- src\Lelleplanner.ConsoleApp\ConsoleRenderer.cs
+- src\Lelleplanner.ConsoleApp\AsciiArt.cs
+- src\Lelleplanner.Core\GameEngine.cs
+- PLAN.md
+- CONTEXT.md
+
+Next steps (Session 6 of Iteration 1): manually test both rollovers (day and
+week boundary) in the console app, walk the Definition of Done checklist,
+tag `v0.2`.
+
 (Will append a short summary at the end of each completed session.)
