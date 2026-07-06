@@ -20,13 +20,13 @@ namespace Lelleplanner.Core
             if ( !string.IsNullOrEmpty( jsonString ) )
             {
                 GameState loadedState = JsonSerializer.Deserialize<GameState>( jsonString )!;
-                loadedState.RolloverIfNeeded();
+                loadedState.DailyRolloverIfNeeded();
                 loadedState.WeeklyRolloverIfNeeded();
                 return loadedState;
             }
 
             GameState createdState = new GameState();
-            createdState.RolloverIfNeeded();
+            createdState.DailyRolloverIfNeeded();
             createdState.WeeklyRolloverIfNeeded();
             return createdState;
         }

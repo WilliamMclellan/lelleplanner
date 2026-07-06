@@ -4,15 +4,15 @@ using System;
 using System.Linq;
 
 var gameState = Persistence.LoadOrCreate();
-var totalQuestList = gameState.Quests.Where(quest => quest.Key != "daily-quest-clear").ToList();
+var totalQuestList = gameState.DailyQuests.Where(quest => quest.Key != "daily-quest-clear").ToList();
 
 while ( true )
 {
-    var activeQuestList = gameState.Quests
+    var activeQuestList = gameState.DailyQuests
         .Where(q => !q.Completed && q.Key != "daily-quest-clear")
         .ToList();
 
-    var completedQuestList = gameState.Quests
+    var completedQuestList = gameState.DailyQuests
         .Where(q => q.Completed && q.Key != "daily-quest-clear")
         .ToList();
 
@@ -35,11 +35,11 @@ while ( true )
 
     if (GameEngine.ValidQuestNumber(activeQuestList.Count(), questNumber))
     {
-        bool? dailyQuestCleared = gameState.Quests.FirstOrDefault(q => q.Key == "daily-quest-clear")?.Completed;
+        bool? dailyQuestCleared = gameState.DailyQuests.FirstOrDefault(q => q.Key == "daily-quest-clear")?.Completed;
         GameEngine.CompleteQuest(gameState, activeQuestList[questNumber - 1].Key);
         ConsoleRenderer.RenderQuestCompleted();
 
-        activeQuestList = gameState.Quests
+        activeQuestList = gameState.DailyQuests
             .Where(q => !q.Completed && q.Key != "daily-quest-clear")
             .ToList();
 

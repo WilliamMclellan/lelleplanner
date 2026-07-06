@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Lelleplanner.Core
@@ -7,37 +8,34 @@ namespace Lelleplanner.Core
     {
         public static void CompleteQuest(GameState gameState, string questKey)
         {
-            Quest? quest = gameState.Quests.FirstOrDefault(q => q.Key == questKey);
+            Quest? quest = gameState.DailyQuests.FirstOrDefault(q => q.Key == questKey);
             if ( quest != null)
             {
                 quest.Completed = true;
             }
         }
 
-        public static void CompleteDailyQuest(GameState gameState)
+        private static void CompleteMetaQuest(List<Quest> quests, string metaQuestKey, Action onCleared)
         {
-            if ( gameState.Quests.Where(q => q.Key != "daily-quest-clear" ).All(q => q.Completed ))
+            if (quests.Where(q => q.Key != metaQuestKey).All(q => q.Completed))
             {
-                Quest? quest = gameState.Quests.FirstOrDefault(q => q.Key == "daily-quest-clear" && !q.Completed);
-                if ( quest != null )
+                Quest? quest = quests.FirstOrDefault(q => q.Key == metaQuestKey && !q.Completed);
+                if (quest != null)
                 {
                     quest.Completed = true;
-                    gameState.DailyCoins++;
+                    onCleared();
                 }
             }
         }
 
+        public static void CompleteDailyQuest(GameState gameState)
+        {
+            CompleteMetaQuest(gameState.DailyQuests, "daily-quest-clear", () => gameState.DailyCoins++);
+        }
+
         public static void CompleteWeeklyQuest(GameState gameState)
         {
-            if (gameState.WeeklyQuests.Where(q => q.Key != "weekly-quest-clear").All(q => q.Completed))
-            {
-                Quest? quest = gameState.WeeklyQuests.FirstOrDefault(q => q.Key == "weekly-quest-clear" && !q.Completed);
-                if (quest != null)
-                {
-                    quest.Completed = true;
-                    gameState.WeeklyCoins++;
-                }
-            }
+            CompleteMetaQuest(gameState.WeeklyQuests, "weekly-quest-clear", () => gameState.WeeklyCoins++);
         }
 
         public static bool HasRemainingQuests(List<Quest> activeQuestList)

@@ -14,13 +14,16 @@ Domain-Driven Design and unit testing, not just to add features.
 
 <hr>
 
-## Where things stand (as of 2026-07-05)
+## Where things stand (as of 2026-07-06)
 - **MVP (v0.1) shipped and tagged.** Daily quests, Daily Coins, day rollover,
   console UI, and JSON persistence are all working end-to-end.
 - **Iteration 1 (v0.2): Testing + Weekly Quests** is in progress — scope and
   session breakdown are locked in PLAN.md. Weekly quests, `WeeklyCoins`, and
-  week rollover now exist in `Core` (mirroring the daily equivalents), but
-  aren't wired into the console yet — that's session 5.
+  week rollover exist in `Core` (mirroring the daily equivalents). Session 4
+  extracted the shared daily/weekly rollover abstraction (`GameState`'s
+  `ResetQuestsIfNeeded`, `GameEngine`'s `CompleteMetaQuest`), so that
+  duplication is resolved. Weekly quests still aren't wired into the console
+  yet — that's session 5.
 - Repo folder name: `lelleplanner` (on this machine:
   `C:\Users\William\repos\lelleplanner`)
 - Git repository with a GitHub remote (`origin`); each session's work lands
@@ -71,9 +74,8 @@ Domain-Driven Design and unit testing, not just to add features.
 <hr>
 
 ## Next step
-Iteration 1, session 4 — PLAN.md's "Suggested session breakdown": extract the
-shared daily/weekly rollover abstraction now that both copies exist side by
-side in `GameClock`, `GameState`, and `GameEngine`.
+Iteration 1, session 5 — PLAN.md's "Suggested session breakdown": wire weekly
+quests into `ConsoleRenderer`/`Program.cs`.
 
 <hr>
 
