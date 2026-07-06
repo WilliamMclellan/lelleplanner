@@ -9,7 +9,7 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — session 6 next
+## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — complete, ready to tag v0.2
 
 **Progress:** MVP (v0.1) shipped and tagged after session 6. Session 7 scaffolded
 `Lelleplanner.Tests` (xUnit) with `GameClock.GetGameDate` boundary tests. Session 8
@@ -32,8 +32,11 @@ shows both coin/progress lines, and a `WeeklyCelebration` art asset backs
 smoke-testing: the daily/weekly clear checks in `Program.cs` were reading
 pre-action quest lists instead of post-action ones, and `GameEngine.CompleteQuest`
 only ever searched `DailyQuests`, silently no-op'ing on any weekly quest key (fixed
-with `?? gameState.WeeklyQuests.FirstOrDefault(...)`). Session 6 (manual test both
-rollovers, final Definition of Done pass, tag `v0.2`) is next.
+with `?? gameState.WeeklyQuests.FirstOrDefault(...)`). Session 6 manually verified
+both rollover directions against the real console app (stale-week fixture: weekly
+quests reset, daily untouched; stale-day fixture: daily quests reset, weekly
+untouched) with the real save file backed up and restored around each run — every
+Definition of Done item for this iteration is now checked off. Ready to tag `v0.2`.
 
 <hr>
 
@@ -217,7 +220,7 @@ abstraction upfront.
 - [x] Completing both weekly quests triggers `Week Survived` and awards
       exactly 1 Weekly Coin (not repeatable within the same game-week)
 - [x] Weekly Coin balance persists across runs
-- [ ] On a new game-week, weekly quests auto-reset; daily quests and coins
+- [x] On a new game-week, weekly quests auto-reset; daily quests and coins
       are unaffected by the weekly rollover (and vice versa)
 - [x] Any duplication between daily/weekly rollover has been resolved via a
       deliberate shared abstraction, not left copy-pasted

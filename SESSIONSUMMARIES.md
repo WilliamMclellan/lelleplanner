@@ -393,4 +393,37 @@ Next steps (Session 6 of Iteration 1): manually test both rollovers (day and
 week boundary) in the console app, walk the Definition of Done checklist,
 tag `v0.2`.
 
+## Session 12 — 2026-07-06
+Summary: Iteration 1 session 6 — manually verified both rollover directions
+against the real console app, closing out the last open Definition of Done
+item for Iteration 1. No code changes; this was a verification-only session.
+
+Actions performed:
+- Backed up the real save file (`%LOCALAPPDATA%\Lelleplanner\gamestate.json`)
+- Wrote a "stale week, current day" fixture (WeekStartDate a week in the
+  past, GameDate current, all weekly quests marked complete, daily quests
+  mid-progress) and ran the app: confirmed `WeekStartDate` advanced to the
+  current game-week, all weekly quests reset to incomplete, `WeeklyCoins`
+  untouched — and daily quests/coins were completely unaffected
+- Wrote a "stale day, current week" fixture (GameDate a day in the past,
+  WeekStartDate current, all daily quests + the meta-quest marked complete,
+  weekly quests mid-progress) and ran the app: confirmed `GameDate` advanced
+  to today, all daily quests (including the meta-quest) reset to incomplete,
+  `DailyCoins` untouched — and weekly quests/coins were completely unaffected
+- Restored the real save file after each test run
+- Re-ran `dotnet test` (11 passed) as a final sanity check
+- Checked off the last remaining Iteration 1 Definition of Done item in
+  PLAN.md ("on a new game-week, weekly quests auto-reset; daily quests and
+  coins are unaffected... and vice versa") — every item for this iteration
+  is now checked
+- Updated PLAN.md's status line to "complete, ready to tag v0.2" and
+  CONTEXT.md's "where things stand"/"next step" to match
+
+Files created/modified:
+- PLAN.md
+- CONTEXT.md
+
+Next steps: tag `v0.2` (user to do via git), then start Iteration 2
+(Monthly quests + Achievements) whenever ready.
+
 (Will append a short summary at the end of each completed session.)
