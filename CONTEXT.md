@@ -22,8 +22,12 @@ Domain-Driven Design and unit testing, not just to add features.
   week rollover exist in `Core` (mirroring the daily equivalents). Session 4
   extracted the shared daily/weekly rollover abstraction (`GameState`'s
   `ResetQuestsIfNeeded`, `GameEngine`'s `CompleteMetaQuest`), so that
-  duplication is resolved. Weekly quests still aren't wired into the console
-  yet — that's session 5.
+  duplication is resolved. Session 5 wired weekly quests into the console —
+  daily and weekly quests now render in one combined, `[Daily]`/`[Weekly]`-
+  tagged, continuously-numbered list, and completing a weekly clear awards a
+  Weekly Coin with its own celebration. Only remaining item before v0.2:
+  manually confirm the week-boundary rollover in the real console app
+  (session 6).
 - Repo folder name: `lelleplanner` (on this machine:
   `C:\Users\William\repos\lelleplanner`)
 - Git repository with a GitHub remote (`origin`); each session's work lands
@@ -74,8 +78,9 @@ Domain-Driven Design and unit testing, not just to add features.
 <hr>
 
 ## Next step
-Iteration 1, session 5 — PLAN.md's "Suggested session breakdown": wire weekly
-quests into `ConsoleRenderer`/`Program.cs`.
+Iteration 1, session 6 — PLAN.md's "Suggested session breakdown": manually
+test both rollovers (day and week boundary) in the console app, walk the
+Definition of Done checklist, tag `v0.2`.
 
 <hr>
 

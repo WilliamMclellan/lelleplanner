@@ -9,7 +9,7 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — session 5 next
+## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — session 6 next
 
 **Progress:** MVP (v0.1) shipped and tagged after session 6. Session 7 scaffolded
 `Lelleplanner.Tests` (xUnit) with `GameClock.GetGameDate` boundary tests. Session 8
@@ -24,8 +24,16 @@ extracted the shared daily/weekly rollover abstraction: `GameState` gained a pri
 `ResetQuestsIfNeeded` (returns the resolved date rather than mutating a parameter,
 since `DateOnly` is a struct) backing `DailyRolloverIfNeeded`/`WeeklyRolloverIfNeeded`,
 and `GameEngine` gained a private `CompleteMetaQuest` (takes an `Action onCleared`)
-backing `CompleteDailyQuest`/`CompleteWeeklyQuest`. Session 5 (wire weekly quests into
-`ConsoleRenderer`/`Program.cs`) is next.
+backing `CompleteDailyQuest`/`CompleteWeeklyQuest`. Session 5 wired weekly quests into
+`ConsoleRenderer`/`Program.cs`: a single combined, `[Daily]`/`[Weekly]`-tagged quest
+list (continuous numbering across both) replaces the daily-only list, `RenderBanner`
+shows both coin/progress lines, and a `WeeklyCelebration` art asset backs
+`RenderWeeklyClearCelebration`. Along the way, fixed two real bugs surfaced by manual
+smoke-testing: the daily/weekly clear checks in `Program.cs` were reading
+pre-action quest lists instead of post-action ones, and `GameEngine.CompleteQuest`
+only ever searched `DailyQuests`, silently no-op'ing on any weekly quest key (fixed
+with `?? gameState.WeeklyQuests.FirstOrDefault(...)`). Session 6 (manual test both
+rollovers, final Definition of Done pass, tag `v0.2`) is next.
 
 <hr>
 
@@ -204,11 +212,11 @@ abstraction upfront.
 ### Definition of done
 - [x] `dotnet test` runs and passes, covering `GameClock` boundary cases and
       `GameEngine.CompleteDailyQuest`'s full-clear + double-award guard
-- [ ] Weekly quest list renders alongside daily quests, with its own
+- [x] Weekly quest list renders alongside daily quests, with its own
       active/completed display
-- [ ] Completing both weekly quests triggers `Week Survived` and awards
+- [x] Completing both weekly quests triggers `Week Survived` and awards
       exactly 1 Weekly Coin (not repeatable within the same game-week)
-- [ ] Weekly Coin balance persists across runs
+- [x] Weekly Coin balance persists across runs
 - [ ] On a new game-week, weekly quests auto-reset; daily quests and coins
       are unaffected by the weekly rollover (and vice versa)
 - [x] Any duplication between daily/weekly rollover has been resolved via a

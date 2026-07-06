@@ -27,6 +27,21 @@
         *  ALL DAILY QUESTS CLEARED!  *
               +1 Daily Coin!
 """;
+        public const string WeeklyCelebration = """
+                   ___________
+                  '.  \   /  .'
+                    \  \ /  /
+                     \  V  /
+                      |   |
+                      |___|
+                     /     \
+                    /_______\
+                    `-------'
+
+        *  ALL WEEKLY QUESTS CLEARED!  *
+              +1 Weekly Coin!
+""";
+
         public static string QuestCompleted = """
             ============================================================
             ||                                                        ||
