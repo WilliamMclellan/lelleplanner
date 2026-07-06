@@ -11,7 +11,7 @@ namespace Lelleplanner.Core
 
         public int DailyCoins { get; set; }
         public int WeeklyCoins { get; set; }
-        public List<Quest> Quests { get; set; }
+        public List<Quest> DailyQuests { get; set; }
         public List<Quest> WeeklyQuests { get; set; }
 
         public GameState()
@@ -20,7 +20,7 @@ namespace Lelleplanner.Core
             WeekStartDate = GameClock.GetGameWeekStart();
             DailyCoins = 0;
             WeeklyCoins = 0;
-            Quests = InitializeDefaultQuests();
+            DailyQuests = InitializeDefaultQuests();
             WeeklyQuests = InitializeWeeklyQuests();
         }
 
@@ -50,30 +50,27 @@ namespace Lelleplanner.Core
             return quests;
         }
 
-        public void RolloverIfNeeded()
+        public void DailyRolloverIfNeeded()
         {
-            var currentGameDate = GameClock.GetGameDate();
-            if ( GameDate != currentGameDate )
-            {
-                foreach (Quest quest in Quests)
-                {
-                    quest.Completed = false;
-                }
-                GameDate = currentGameDate;
-            }
+            GameDate = ResetQuestsIfNeeded(GameDate, GameClock.GetGameDate(), DailyQuests);
         }
 
         public void WeeklyRolloverIfNeeded()
         {
-            var currentWeekStartDate = GameClock.GetGameWeekStart();
-            if (WeekStartDate != currentWeekStartDate)
+            WeekStartDate = ResetQuestsIfNeeded(WeekStartDate, GameClock.GetGameWeekStart(), WeeklyQuests);
+        }
+
+        private DateOnly ResetQuestsIfNeeded(DateOnly storedGameDate, DateOnly currentGameDate, List<Quest> quests)
+        {
+            if ( storedGameDate != currentGameDate )
             {
-                foreach (Quest quest in WeeklyQuests)
+                foreach (Quest quest in quests)
                 {
                     quest.Completed = false;
                 }
-                WeekStartDate = currentWeekStartDate;
+                return currentGameDate;
             }
+            return storedGameDate;
         }
     }
 }

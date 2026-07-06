@@ -14,21 +14,21 @@ namespace Lelleplanner.Tests
         public void GameEngine_CompleteDailyQuest_GiveDailyCoin()
         {
             GameState gameState = new GameState();
-            gameState.Quests.Where(q => !q.Completed && q.Key != "daily-quest-clear")
+            gameState.DailyQuests.Where(q => !q.Completed && q.Key != "daily-quest-clear")
                 .ToList()
                 .ForEach(q => q.Completed = true);
 
             GameEngine.CompleteDailyQuest(gameState);
 
             Assert.Equal(1, gameState.DailyCoins);
-            Assert.True(gameState.Quests.First(q => q.Key == "daily-quest-clear").Completed);
+            Assert.True(gameState.DailyQuests.First(q => q.Key == "daily-quest-clear").Completed);
         }
 
         [Fact]
         public void GameEngine_CompleteDailyQuest_NoDoubleReward()
         {
             GameState gameState = new GameState();
-            gameState.Quests.Where(q => !q.Completed && q.Key != "daily-quest-clear")
+            gameState.DailyQuests.Where(q => !q.Completed && q.Key != "daily-quest-clear")
                 .ToList()
                 .ForEach(q => q.Completed = true);
 
@@ -36,21 +36,21 @@ namespace Lelleplanner.Tests
             GameEngine.CompleteDailyQuest(gameState);
 
             Assert.Equal(1, gameState.DailyCoins);
-            Assert.True(gameState.Quests.First(q => q.Key == "daily-quest-clear").Completed);
+            Assert.True(gameState.DailyQuests.First(q => q.Key == "daily-quest-clear").Completed);
         }
 
         [Fact]
         public void GameEngine_CompleteDailyQuest_NotDoneYet()
         {
             GameState gameState = new GameState();
-            gameState.Quests.Where(q => !q.Completed && q.Key != "daily-quest-clear" && q.Key != "buff-papaya")
+            gameState.DailyQuests.Where(q => !q.Completed && q.Key != "daily-quest-clear" && q.Key != "buff-papaya")
                 .ToList()
                 .ForEach(q => q.Completed = true);
 
             GameEngine.CompleteDailyQuest(gameState);
 
             Assert.Equal(0, gameState.DailyCoins);
-            Assert.False(gameState.Quests.First(q => q.Key == "daily-quest-clear").Completed);
+            Assert.False(gameState.DailyQuests.First(q => q.Key == "daily-quest-clear").Completed);
         }
     }
 }

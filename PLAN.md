@@ -9,7 +9,7 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — session 4 next
+## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — session 5 next
 
 **Progress:** MVP (v0.1) shipped and tagged after session 6. Session 7 scaffolded
 `Lelleplanner.Tests` (xUnit) with `GameClock.GetGameDate` boundary tests. Session 8
@@ -20,8 +20,12 @@ guard, partial-completion) and, as a design cleanup surfaced along the way, conv
 `GameClock.GetGameWeekStart`, `GameState.WeeklyQuests`/`WeeklyCoins`/
 `WeekStartDate`/`WeeklyRolloverIfNeeded`, and `GameEngine.CompleteWeeklyQuest` —
 deliberately mirroring the daily equivalents rather than sharing code yet. Session 4
-(extract the shared daily/weekly rollover abstraction, now that both copies exist)
-is next.
+extracted the shared daily/weekly rollover abstraction: `GameState` gained a private
+`ResetQuestsIfNeeded` (returns the resolved date rather than mutating a parameter,
+since `DateOnly` is a struct) backing `DailyRolloverIfNeeded`/`WeeklyRolloverIfNeeded`,
+and `GameEngine` gained a private `CompleteMetaQuest` (takes an `Action onCleared`)
+backing `CompleteDailyQuest`/`CompleteWeeklyQuest`. Session 5 (wire weekly quests into
+`ConsoleRenderer`/`Program.cs`) is next.
 
 <hr>
 
@@ -207,7 +211,7 @@ abstraction upfront.
 - [ ] Weekly Coin balance persists across runs
 - [ ] On a new game-week, weekly quests auto-reset; daily quests and coins
       are unaffected by the weekly rollover (and vice versa)
-- [ ] Any duplication between daily/weekly rollover has been resolved via a
+- [x] Any duplication between daily/weekly rollover has been resolved via a
       deliberate shared abstraction, not left copy-pasted
 
 <hr>

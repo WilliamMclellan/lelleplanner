@@ -288,4 +288,45 @@ for `GameEngine.CompleteWeeklyQuest` or `GameState.WeeklyRolloverIfNeeded`.
 Next steps (Session 4 of Iteration 1): extract the shared daily/weekly
 rollover abstraction now that both copies exist side by side.
 
+## Session 10 — 2026-07-06
+Summary: Iteration 1 session 4 — extracted the shared daily/weekly rollover
+abstraction, closing the last open Definition-of-Done item for this
+iteration's testing scope.
+
+Actions performed:
+- `GameState`: replaced the duplicated `RolloverIfNeeded`/`WeeklyRolloverIfNeeded`
+  bodies with a shared private `ResetQuestsIfNeeded(storedDate, currentDate, quests)`
+  that returns the resolved date rather than mutating a parameter (since `DateOnly`
+  is a struct, mutating a by-value parameter wouldn't propagate back to the
+  caller — this was a real bug in an early draft, caught before landing); both
+  rollover methods now assign its return value back to their own property.
+  Renamed `RolloverIfNeeded` to `DailyRolloverIfNeeded` for symmetry with
+  `WeeklyRolloverIfNeeded`, and marked the helper `private` (internal detail,
+  not part of the public API)
+- `GameEngine`: replaced the duplicated `CompleteDailyQuest`/`CompleteWeeklyQuest`
+  bodies with a shared private `CompleteMetaQuest(quests, metaQuestKey, Action onCleared)`
+  — since the two methods differ not just in which list/key they use but in
+  *what happens on clear* (incrementing `DailyCoins` vs `WeeklyCoins`), the
+  varying behavior is passed in as an `Action` lambda (e.g.
+  `() => gameState.DailyCoins++`) rather than as data
+- Renamed `GameState.Quests` to `DailyQuests` for clarity now that
+  `WeeklyQuests` exists alongside it; updated all call sites (`GameEngine`,
+  `Program.cs`, `GameEngineTests`)
+- Confirmed `dotnet build` (0 warnings/errors) and `dotnet test` (11 passed)
+  after each round of changes
+- Checked off PLAN.md's "duplication resolved via a deliberate shared
+  abstraction" Definition-of-Done item for Iteration 1
+
+Files created/modified:
+- src\Lelleplanner.Core\GameState.cs
+- src\Lelleplanner.Core\GameEngine.cs
+- src\Lelleplanner.Core\Persistence.cs
+- src\Lelleplanner.ConsoleApp\Program.cs
+- src\Lelleplanner.Tests\GameEngineTests.cs
+- PLAN.md
+- CONTEXT.md
+
+Next steps (Session 5 of Iteration 1): wire weekly quests into
+`ConsoleRenderer`/`Program.cs`.
+
 (Will append a short summary at the end of each completed session.)
