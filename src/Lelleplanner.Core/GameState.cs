@@ -8,20 +8,24 @@ namespace Lelleplanner.Core
     {
         public DateOnly GameDate { get; set; }
         public DateOnly WeekStartDate { get; set; }
+        public DateOnly MonthStartDate { get; set; }
 
         public int DailyCoins { get; set; }
         public int WeeklyCoins { get; set; }
         public List<Quest> DailyQuests { get; set; }
         public List<Quest> WeeklyQuests { get; set; }
+        public List<MonthlyQuest> MonthlyQuests { get; set; }
 
         public GameState()
         {
             GameDate = GameClock.GetGameDate();
             WeekStartDate = GameClock.GetGameWeekStart();
+            MonthStartDate = GameClock.GetGameMonthStart();
             DailyCoins = 0;
             WeeklyCoins = 0;
             DailyQuests = InitializeDefaultQuests();
             WeeklyQuests = InitializeWeeklyQuests();
+            MonthlyQuests = InitializeMonthlyQuests();
         }
 
         private List<Quest> InitializeDefaultQuests()
@@ -50,6 +54,18 @@ namespace Lelleplanner.Core
             return quests;
         }
 
+        private List<MonthlyQuest> InitializeMonthlyQuests()
+        {
+            List<MonthlyQuest> quests = new List<MonthlyQuest>
+            {
+                new MonthlyQuest("habit-handled", "Habit Handled!", "Clear 'Excellent work, daily cleared!' 25 times", threshold: 25),
+                new MonthlyQuest("plates-for-days", "Plates For Days", "Clear 'Shiny Sparkly!' 4 times", threshold: 4),
+                new MonthlyQuest("tidy-home-tidy-life", "Tidy Home, Tidy Life", "Clear 'Tidy Room, Tidy Mind' 4 times", threshold: 4)
+            };
+
+            return quests;
+        }
+
         public void DailyRolloverIfNeeded()
         {
             GameDate = ResetQuestsIfNeeded(GameDate, GameClock.GetGameDate(), DailyQuests);
@@ -58,6 +74,11 @@ namespace Lelleplanner.Core
         public void WeeklyRolloverIfNeeded()
         {
             WeekStartDate = ResetQuestsIfNeeded(WeekStartDate, GameClock.GetGameWeekStart(), WeeklyQuests);
+        }
+
+        public void MonthlyRolloverIfNeeded()
+        {
+            MonthStartDate = ResetProgressIfNeeded(MonthStartDate, GameClock.GetGameMonthStart(), MonthlyQuests);
         }
 
         private DateOnly ResetQuestsIfNeeded(DateOnly storedGameDate, DateOnly currentGameDate, List<Quest> quests)
@@ -71,6 +92,21 @@ namespace Lelleplanner.Core
                 return currentGameDate;
             }
             return storedGameDate;
+        }
+
+        private DateOnly ResetProgressIfNeeded(DateOnly storedMonthStart, DateOnly currentMonthStart, List<MonthlyQuest> quests)
+        {
+            if ( storedMonthStart != currentMonthStart )
+            {
+                foreach (MonthlyQuest quest in quests)
+                {
+                    quest.Completed = false;
+                    quest.Progress = 0;
+                }
+                return currentMonthStart;
+            }
+
+            return storedMonthStart;
         }
     }
 }
