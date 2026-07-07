@@ -29,5 +29,16 @@ namespace Lelleplanner.Core
         {
             return GetGameWeekStart(DateTime.Now);
         }
+
+        public static DateOnly GetGameMonthStart(DateTime now)
+        {
+            var gameDate = GetGameDate(now);
+            return new DateOnly(gameDate.Year, gameDate.Month, 1);
+        }
+
+        public static DateOnly GetGameMonthStart()
+        {
+            return GetGameMonthStart(DateTime.Now);
+        }
     }
 }
