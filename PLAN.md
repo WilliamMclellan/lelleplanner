@@ -11,11 +11,17 @@ full end-state (that's [VISION.md](VISION.md)).
 
 ## Status: Iteration 2 (v0.3) — Monthly Quests + Achievements — starting
 
-**Progress:** v0.1 and v0.2 both shipped and tagged. Iteration 2 kicked off session 13:
-design decisions made (see [Iteration 2](#iteration-2-v03-monthly-quests--achievements)
-below) — monthly quest progress resets every game-month, achievements track a separate
-lifetime counter and complete exactly once, and a `QuestCompleted` domain event decouples
-quest completion from its reactions (monthly progress, achievements). No code yet.
+**Progress:** v0.1 and v0.2 both shipped and tagged. Iteration 2 kicked off session 13
+as design-only (see [Iteration 2](#iteration-2-v03-monthly-quests--achievements) below).
+Session 1 added `GameClock.GetGameMonthStart` with cutover-hour and year-boundary tests.
+Session 2 wired `MonthStartDate`/`MonthlyQuests` (progress-counter based, via a new
+`MonthlyQuest` type) and `MonthlyRolloverIfNeeded()` into `GameState`, plus a new
+`Persistence` call site. Session 3 added the `QuestCompleted` domain event (raised from
+both `GameEngine.CompleteQuest` and `CompleteMetaQuest`, guarded against re-firing on an
+already-completed quest) and its first subscriber, `MonthlyProgressTracker`, which
+increments monthly-quest progress and completes it at threshold — subscribed once at the
+composition root in `Program.cs`, with `GameEngine` staying unaware monthly quests exist.
+Achievements (session 4) are next.
 
 <hr>
 
@@ -286,14 +292,15 @@ through the existing pattern.
 | 6 (Fri) | Manual test full cascade + month rollover, Definition of Done walkthrough, tag `v0.3` |
 
 ### Definition of done
-- [ ] `GameClock.GetGameMonthStart` tested, including the year-boundary case
-- [ ] Monthly quest progress increments when its underlying daily/weekly quest
+- [x] `GameClock.GetGameMonthStart` tested, including the year-boundary case
+- [x] Monthly quest progress increments when its underlying daily/weekly quest
       clears, and each monthly quest completes exactly once per game-month (no
       double-counting a single clear, no re-completing after already complete this
       month)
 - [ ] `QuestCompleted` event exists; monthly-progress tracking and
       achievement-checking are both independent subscribers to it, not direct calls
-      from `GameEngine`
+      from `GameEngine` (event + monthly-progress subscriber done; achievement
+      subscriber is session 4)
 - [ ] Achievements track lifetime counts of monthly-quest clears, complete exactly
       once ever, and award exactly 1 Markov Fragment each
 - [ ] Monthly quest list and achievement status render in the console UI

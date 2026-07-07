@@ -21,12 +21,13 @@ Domain-Driven Design and unit testing, not just to add features.
   Weekly quests, Weekly Coins, week rollover, and a shared daily/weekly
   rollover abstraction are all in, with test coverage and a manual,
   real-console verification of both rollover directions.
-- **Iteration 2 (v0.3): Monthly Quests + Achievements has started.** Session
-  13 was design-only (no code): monthly quest progress counters reset every
-  game-month; achievements track a separate lifetime counter of monthly-quest
-  clears and complete exactly once; a `QuestCompleted` domain event decouples
-  quest completion from its reactions (monthly progress, achievements). Full
-  scope and session breakdown are in PLAN.md's Iteration 2 section.
+- **Iteration 2 (v0.3): Monthly Quests + Achievements is in progress.**
+  Design decided in session 13. Session 1 added `GameClock.GetGameMonthStart`.
+  Session 2 wired `MonthStartDate`/`MonthlyQuests` (progress-counter based)
+  into `GameState`. Session 3 added the `QuestCompleted` domain event and its
+  first subscriber, `MonthlyProgressTracker`. Achievements + `MarkovFragments`
+  (session 4) are next. Full scope and session breakdown are in PLAN.md's
+  Iteration 2 section.
 - Repo folder name: `lelleplanner` (on this machine:
   `C:\Users\William\repos\lelleplanner`)
 - Git repository with a GitHub remote (`origin`); each session's work lands
@@ -82,8 +83,8 @@ Domain-Driven Design and unit testing, not just to add features.
 <hr>
 
 ## Next step
-Session 1 of Iteration 2: `GameClock.GetGameMonthStart` + boundary tests
-(mirroring `GetGameWeekStart`) — see PLAN.md's Iteration 2 session
+Session 4 of Iteration 2: Achievements + `MarkovFragments`, subscribing to
+the same `QuestCompleted` event — see PLAN.md's Iteration 2 session
 breakdown.
 
 <hr>

@@ -6,14 +6,18 @@ namespace Lelleplanner.Core
 {
     public static class GameEngine
     {
+
+        public static event Action<QuestCompleted>? OnQuestCompleted;
+
         public static void CompleteQuest(GameState gameState, string questKey)
         {
-            Quest? quest = gameState.DailyQuests.FirstOrDefault(q => q.Key == questKey)
-                ?? gameState.WeeklyQuests.FirstOrDefault(q => q.Key == questKey);
+            Quest? quest = gameState.DailyQuests.FirstOrDefault(q => q.Key == questKey && !q.Completed)
+                ?? gameState.WeeklyQuests.FirstOrDefault(q => q.Key == questKey && !q.Completed);
 
             if ( quest != null)
             {
                 quest.Completed = true;
+                OnQuestCompleted?.Invoke(new QuestCompleted(quest.Key));
             }
         }
 
@@ -25,6 +29,7 @@ namespace Lelleplanner.Core
                 if (quest != null)
                 {
                     quest.Completed = true;
+                    OnQuestCompleted?.Invoke(new QuestCompleted(quest.Key));
                     onCleared();
                 }
             }
