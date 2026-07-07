@@ -14,15 +14,19 @@ Domain-Driven Design and unit testing, not just to add features.
 
 <hr>
 
-## Where things stand (as of 2026-07-06)
+## Where things stand (as of 2026-07-07)
 - **MVP (v0.1) shipped and tagged.** Daily quests, Daily Coins, day rollover,
   console UI, and JSON persistence are all working end-to-end.
-- **Iteration 1 (v0.2): Testing + Weekly Quests is complete.** All Definition
-  of Done items in PLAN.md are checked off, including a manual, real-console
-  verification of both rollover directions (stale week resets weekly quests
-  without touching daily; stale day resets daily quests without touching
-  weekly). Not yet tagged — that's the next action, on the user's side (see
-  "Next step" below).
+- **Iteration 1 (v0.2): Testing + Weekly Quests is complete and tagged.**
+  Weekly quests, Weekly Coins, week rollover, and a shared daily/weekly
+  rollover abstraction are all in, with test coverage and a manual,
+  real-console verification of both rollover directions.
+- **Iteration 2 (v0.3): Monthly Quests + Achievements has started.** Session
+  13 was design-only (no code): monthly quest progress counters reset every
+  game-month; achievements track a separate lifetime counter of monthly-quest
+  clears and complete exactly once; a `QuestCompleted` domain event decouples
+  quest completion from its reactions (monthly progress, achievements). Full
+  scope and session breakdown are in PLAN.md's Iteration 2 section.
 - Repo folder name: `lelleplanner` (on this machine:
   `C:\Users\William\repos\lelleplanner`)
 - Git repository with a GitHub remote (`origin`); each session's work lands
@@ -69,12 +73,18 @@ Domain-Driven Design and unit testing, not just to add features.
   the user writes — not to produce diffs via Edit/Write for source files.
   (Docs like PLAN.md/CONTEXT.md/SESSIONSUMMARIES.md are fine for Claude to
   update directly.)
+- At the end of each completed **iteration** (not every session), Claude
+  updates `LEARNINGS.md` at the repo root — a personal reference of the
+  concepts/C# patterns covered that iteration, each with a real example
+  pulled from this codebase. It's gitignored on purpose (not part of the
+  project); the point is a place to see what's actually been learned.
 
 <hr>
 
 ## Next step
-Tag `v0.2` (user to do via git — see PLAN.md's roadmap), then start
-Iteration 2 (Monthly quests + Achievements) whenever ready.
+Session 1 of Iteration 2: `GameClock.GetGameMonthStart` + boundary tests
+(mirroring `GetGameWeekStart`) — see PLAN.md's Iteration 2 session
+breakdown.
 
 <hr>
 

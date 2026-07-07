@@ -426,4 +426,36 @@ Files created/modified:
 Next steps: tag `v0.2` (user to do via git), then start Iteration 2
 (Monthly quests + Achievements) whenever ready.
 
+## Session 13 — 2026-07-07
+Summary: Kicked off Iteration 2 (Monthly Quests + Achievements). Design-only
+session — no code changes — to resolve two open questions before scaffolding
+anything.
+
+Actions performed:
+- Decided monthly quest cadence: monthly quest progress counters reset every
+  game-month (mirroring the existing daily/weekly rollover pattern via a new
+  `GameClock.GetGameMonthStart`), while achievements track a separate
+  *lifetime* counter of monthly-quest clears and complete exactly once, never
+  resetting — matching VISION.md's "these are only completed once"
+- Decided event design: introduce a real C# `QuestCompleted` domain event
+  (raised from `GameEngine` whenever any quest completes) rather than
+  extending the existing `Action`-callback pattern from `CompleteMetaQuest`.
+  Monthly-progress tracking and achievement-checking will each be independent
+  subscribers, so a daily quest clearing can cascade into a monthly quest
+  clearing can cascade into an achievement completing, without `GameEngine`
+  knowing about achievements at all
+- Wrote the full Iteration 2 section into PLAN.md: scope, session breakdown,
+  and Definition of Done, mirroring Iteration 1's structure
+- Updated PLAN.md's status line and CONTEXT.md's "where things stand"/"next
+  step" to reflect Iteration 2 starting
+
+Files created/modified:
+- PLAN.md
+- CONTEXT.md
+- SESSIONSUMMARIES.md
+
+Next steps (Session 1 of Iteration 2): `GameClock.GetGameMonthStart` +
+boundary tests (including the year-rollover case, Dec→Jan), mirroring the
+existing `GetGameWeekStart` tests.
+
 (Will append a short summary at the end of each completed session.)

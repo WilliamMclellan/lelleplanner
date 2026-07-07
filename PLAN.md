@@ -9,9 +9,19 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: Iteration 1 (v0.2) — Testing + Weekly Quests — complete, ready to tag v0.2
+## Status: Iteration 2 (v0.3) — Monthly Quests + Achievements — starting
 
-**Progress:** MVP (v0.1) shipped and tagged after session 6. Session 7 scaffolded
+**Progress:** v0.1 and v0.2 both shipped and tagged. Iteration 2 kicked off session 13:
+design decisions made (see [Iteration 2](#iteration-2-v03-monthly-quests--achievements)
+below) — monthly quest progress resets every game-month, achievements track a separate
+lifetime counter and complete exactly once, and a `QuestCompleted` domain event decouples
+quest completion from its reactions (monthly progress, achievements). No code yet.
+
+<hr>
+
+## Iteration 1 (v0.2) recap — Testing + Weekly Quests — complete, tagged v0.2
+
+MVP (v0.1) shipped and tagged after session 6. Session 7 scaffolded
 `Lelleplanner.Tests` (xUnit) with `GameClock.GetGameDate` boundary tests. Session 8
 added `GameEngine.CompleteDailyQuest` tests (full-clear + coin award, double-award
 guard, partial-completion) and, as a design cleanup surfaced along the way, converted
@@ -36,7 +46,7 @@ with `?? gameState.WeeklyQuests.FirstOrDefault(...)`). Session 6 manually verifi
 both rollover directions against the real console app (stale-week fixture: weekly
 quests reset, daily untouched; stale-day fixture: daily quests reset, weekly
 untouched) with the real save file backed up and restored around each run — every
-Definition of Done item for this iteration is now checked off. Ready to tag `v0.2`.
+Definition of Done item for this iteration is now checked off. Tagged `v0.2`.
 
 <hr>
 
@@ -224,6 +234,74 @@ abstraction upfront.
       are unaffected by the weekly rollover (and vice versa)
 - [x] Any duplication between daily/weekly rollover has been resolved via a
       deliberate shared abstraction, not left copy-pasted
+
+<hr>
+
+## Iteration 2 (v0.3): Monthly Quests + Achievements
+
+**Budget:** 4-8 hours.
+
+### Scope
+- `GameClock.GetGameMonthStart`, mirroring `GetGameWeekStart`/`GetGameDate` (respects
+  the 04:00 cutover hour; game-month boundary, not calendar `DateTime.Month`)
+- Monthly quests from VISION.md, as *progress counters* rather than single checkboxes:
+  `Habit Handled!` (`daily-quest-clear` cleared 25x this game-month), `Plates For
+  Days!` (`shiny-sparkly` cleared 4x), `Tidy Home, Tidy Life` (`tidy-room-tidy-mind`
+  cleared 4x). No monthly meta-quest and no Monthly Coin — the vision doc only
+  defines two coin currencies (Daily, Weekly); monthly quests feed achievements
+  instead
+- `GameState.MonthStartDate` + `MonthlyRolloverIfNeeded()`: each new game-month,
+  monthly quest progress counters reset to 0 (mirrors the daily/weekly rollover
+  pattern, doesn't share `ResetQuestsIfNeeded` directly since it's counting, not
+  toggling `Completed`)
+- A `QuestCompleted` domain event: a small event (e.g. a `QuestCompleted(string
+  QuestKey)` record + a C# `event Action<QuestCompleted>?` on `GameEngine`), raised
+  whenever any quest — daily, weekly, *or monthly* — completes. This decouples "a
+  quest cleared" from "what reacts to it": monthly-progress tracking and
+  achievement-checking both subscribe as independent handlers instead of
+  `GameEngine` calling them directly
+- Achievements from VISION.md — `Habits Maintained!`, `Mythical Kitchen`, `Always
+  Ready` — each tracking a *lifetime* counter (never resets) of how many times its
+  corresponding monthly quest has completed. Complete exactly once, ever, at 4
+  clears; award exactly 1 Markov Fragment on completion
+- `GameState.MarkovFragments` currency
+
+### Where it'll get interesting
+This is the first tier of *cascading* completions: a daily quest clearing can cause
+`daily-quest-clear` to clear, which (via the same `QuestCompleted` event) can cause
+`habit-handled` to clear, which can cause the `habits-maintained` achievement to
+complete. Getting the event subscription wired so each tier reacts only to the
+events relevant to it — without `GameEngine` needing to know about achievements at
+all — is the actual design exercise here, not just plumbing three more quests
+through the existing pattern.
+
+### Suggested session breakdown
+| Session | Focus |
+|---|---|
+| 1 | `GameClock.GetGameMonthStart` + boundary tests (incl. year rollover, Dec→Jan) |
+| 2 | `GameState` monthly quests: `MonthStartDate`, `MonthlyQuests` w/ progress counters, `MonthlyRolloverIfNeeded()` |
+| 3 | Define & raise the `QuestCompleted` event from `GameEngine`; a subscribed handler increments monthly progress and completes monthly quests |
+| 4 | Achievements + `MarkovFragments`: a subscribed handler reacts to monthly-quest completions, tracks lifetime counts, completes achievements, awards fragments |
+| 5 | Wire monthly quests + achievements into `ConsoleRenderer`/`Program.cs` |
+| 6 (Fri) | Manual test full cascade + month rollover, Definition of Done walkthrough, tag `v0.3` |
+
+### Definition of done
+- [ ] `GameClock.GetGameMonthStart` tested, including the year-boundary case
+- [ ] Monthly quest progress increments when its underlying daily/weekly quest
+      clears, and each monthly quest completes exactly once per game-month (no
+      double-counting a single clear, no re-completing after already complete this
+      month)
+- [ ] `QuestCompleted` event exists; monthly-progress tracking and
+      achievement-checking are both independent subscribers to it, not direct calls
+      from `GameEngine`
+- [ ] Achievements track lifetime counts of monthly-quest clears, complete exactly
+      once ever, and award exactly 1 Markov Fragment each
+- [ ] Monthly quest list and achievement status render in the console UI
+- [ ] On a new game-month, monthly quest progress resets to 0; daily quests, weekly
+      quests, and achievements are unaffected (and vice versa — daily/weekly
+      rollover doesn't touch monthly progress)
+- [ ] `dotnet test` passes, covering the new `GameClock`, monthly-progress, and
+      achievement logic
 
 <hr>
 
