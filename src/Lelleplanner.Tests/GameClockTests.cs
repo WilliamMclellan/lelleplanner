@@ -46,6 +46,46 @@ public class GameClockTests
         Assert.Equal(expected, result);
     }
 
+    [Fact]
+    public void GetGameMonthStart_MiddleOfMonth()
+    {
+        var dateTime = new DateTime(2026, 7, 14, 8, 0, 0);
+        var expected = new DateOnly(2026, 7, 1);
+
+        var result = GameClock.GetGameMonthStart(dateTime);
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void GetGameMonthStart_StartOfMonth_OnRollover()
+    {
+        var dateTime = new DateTime(2026, 7, 1, 4, 0, 0);
+        var expected = new DateOnly(2026, 7, 1);
+
+        var result = GameClock.GetGameMonthStart(dateTime);
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void GetGameMonthStart_StartOfMonth_BeforeRollover()
+    {
+        var dateTime = new DateTime(2026, 7, 1, 3, 0, 0);
+        var expected = new DateOnly(2026, 6, 1);
+
+        var result = GameClock.GetGameMonthStart(dateTime);
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void GetGameMonthStart_StartOfYear_BeforeRollover()
+    {
+        var dateTime = new DateTime(2026, 1, 1, 3, 0, 0);
+        var expected = new DateOnly(2025, 12, 1);
+
+        var result = GameClock.GetGameMonthStart(dateTime);
+        Assert.Equal(expected, result);
+    }
+
     public static IEnumerable<object[]> GameDateCases()
     {
         yield return new object[] { new DateTime(2026, 7, 4, 2, 0, 0), new DateOnly(2026, 7, 3) };
