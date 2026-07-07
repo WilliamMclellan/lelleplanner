@@ -458,4 +458,35 @@ Next steps (Session 1 of Iteration 2): `GameClock.GetGameMonthStart` +
 boundary tests (including the year-rollover case, Dec→Jan), mirroring the
 existing `GetGameWeekStart` tests.
 
+## Session 14 — 2026-07-07
+Summary: Iteration 2 session 1 — `GameClock.GetGameMonthStart`, mirroring
+`GetGameWeekStart`.
+
+Actions performed:
+- Added `GameClock.GetGameMonthStart(DateTime now)` + parameterless overload:
+  resolves the game-date via the existing `GetGameDate` first (inheriting
+  cutover-hour handling for free), then builds the month start directly from
+  its `Year`/`Month` — no manual date arithmetic, avoiding the "day - 1"
+  class of bug that hit `GetGameDate` in session 5
+- Caught mid-session: an early draft made `GetGameWeekStart(DateTime now)`
+  private to shrink public surface area, which broke the build —
+  `GameClockTests.cs` calls that overload directly across the
+  `Lelleplanner.Tests`/`Lelleplanner.Core` assembly boundary, since the
+  `DateTime now` parameter exists specifically as a testability seam (inject
+  a fixed instant instead of mocking `DateTime.Now`), not just as a
+  convenience overload. Reverted to public, and kept `GetGameMonthStart`'s
+  overload public for the same reason
+- Added four tests to `GameClockTests.cs`: start-of-month at/before cutover,
+  mid-month, and the year-boundary case (Jan 1st before cutover resolves to
+  December of the *previous* year)
+- Confirmed `dotnet build` (0 warnings/errors) and `dotnet test` (15 passed)
+
+Files created/modified:
+- src\Lelleplanner.Core\GameClock.cs
+- src\Lelleplanner.Tests\GameClockTests.cs
+
+Next steps (Session 2 of Iteration 2): wire `MonthStartDate` and
+`MonthlyQuests` (with progress counters, not plain booleans) into
+`GameState`, plus `MonthlyRolloverIfNeeded()`.
+
 (Will append a short summary at the end of each completed session.)

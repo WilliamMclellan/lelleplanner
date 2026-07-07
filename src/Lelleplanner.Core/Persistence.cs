@@ -22,12 +22,14 @@ namespace Lelleplanner.Core
                 GameState loadedState = JsonSerializer.Deserialize<GameState>( jsonString )!;
                 loadedState.DailyRolloverIfNeeded();
                 loadedState.WeeklyRolloverIfNeeded();
+                loadedState.MonthlyRolloverIfNeeded();
                 return loadedState;
             }
 
             GameState createdState = new GameState();
             createdState.DailyRolloverIfNeeded();
             createdState.WeeklyRolloverIfNeeded();
+            createdState.MonthlyRolloverIfNeeded();
             return createdState;
         }
         
