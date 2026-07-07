@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 var gameState = Persistence.LoadOrCreate();
+GameEngine.OnQuestCompleted += evt => MonthlyProgressTracker.HandleQuestCompleted(evt, gameState);
 var totalDailyQuestList = gameState.DailyQuests.Where(quest => quest.Key != "daily-quest-clear").ToList();
 var totalWeeklyQuestList = gameState.WeeklyQuests.Where(quest => quest.Key != "weekly-quest-clear").ToList();
 

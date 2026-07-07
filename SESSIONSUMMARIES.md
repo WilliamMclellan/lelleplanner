@@ -489,4 +489,95 @@ Next steps (Session 2 of Iteration 2): wire `MonthStartDate` and
 `MonthlyQuests` (with progress counters, not plain booleans) into
 `GameState`, plus `MonthlyRolloverIfNeeded()`.
 
+## Session 15 — 2026-07-07
+Summary: Iteration 2 session 2 — wired monthly quests (as progress counters,
+not plain booleans) into `GameState`.
+
+Actions performed:
+- Added `MonthlyQuest.cs`: a type parallel to `Quest`, not sharing it —
+  monthly quests are driven by a `Progress`/`Threshold` count rather than a
+  single `Completed` toggle, a genuinely different shape rather than
+  duplication of the same shape
+- Added `GameState.MonthStartDate` (set from `GameClock.GetGameMonthStart()`
+  in the constructor) and `MonthlyQuests` (via a new
+  `InitializeMonthlyQuests()`): `habit-handled` (threshold 25),
+  `plates-for-days` (threshold 4), `tidy-home-tidy-life` (threshold 4). No
+  monthly meta-quest and no Monthly Coin — VISION.md only defines two coin
+  currencies; monthly quests feed achievements instead (session 4)
+- Added `GameState.MonthlyRolloverIfNeeded()`, backed by a new private
+  `ResetProgressIfNeeded` — deliberately separate from the existing
+  `ResetQuestsIfNeeded` (used by daily/weekly), since a new game-month needs
+  to zero out `Progress` as well as `Completed`, not just flip a bool
+- Wired `MonthlyRolloverIfNeeded()` into both `Persistence.LoadOrCreate` call
+  sites, alongside the existing daily/weekly rollover calls
+- Caught and fixed a real bug: `InitializeMonthlyQuests()` initially
+  constructed all three `MonthlyQuest`s without passing `threshold` (relying
+  on its default of `0`), since none of the three positional-looking calls
+  filled in the 4th/5th constructor parameters — fixed with named arguments
+  (`threshold: 25`, etc.)
+- Caught and fixed two smaller inconsistencies: `MonthlyQuest`'s constructor
+  threw `NullReferenceException` instead of `ArgumentNullException` for null
+  args (mismatched `Quest`'s convention), and had unused template `using`s
+- Confirmed `dotnet build` (0 warnings/errors) and `dotnet test` (15 passed)
+
+Files created/modified:
+- src\Lelleplanner.Core\MonthlyQuest.cs
+- src\Lelleplanner.Core\GameState.cs
+- src\Lelleplanner.Core\Persistence.cs
+
+Next steps (Session 3 of Iteration 2): define and raise a `QuestCompleted`
+domain event from `GameEngine`; give it a first subscriber that increments
+monthly-quest progress.
+
+## Session 16 — 2026-07-07
+Summary: Iteration 2 session 3 — the `QuestCompleted` domain event, and its
+first subscriber, `MonthlyProgressTracker`.
+
+Actions performed:
+- Added `QuestCompleted.cs`: a small `record QuestCompleted(string
+  QuestKey)`
+- Added `GameEngine.OnQuestCompleted`, a static `event Action<QuestCompleted>?`,
+  raised from both `CompleteQuest` and `CompleteMetaQuest` right after a
+  quest's `Completed` flips to `true`
+- Caught and fixed a latent double-fire risk in `CompleteQuest`: it had no
+  guard against being called on an already-completed quest (harmless before,
+  since its only real side effect was setting a bool that was already
+  `true`) — now that completion drives an event with real downstream
+  effects, folded the guard into the lookup itself
+  (`FirstOrDefault(q => q.Key == questKey && !q.Completed)`) so an
+  already-completed quest is never found, matching `CompleteMetaQuest`'s
+  existing guard
+- Added `MonthlyProgressTracker.cs`: a static class deliberately outside
+  `GameEngine`, so `GameEngine` never needs to know monthly quests exist.
+  `HandleQuestCompleted(QuestCompleted, GameState)` maps a source quest key
+  (`daily-quest-clear`, `shiny-sparkly`, `tidy-room-tidy-mind`) to its
+  monthly quest via a `Dictionary<string, string>` + `TryGetValue`,
+  increments `Progress`, and completes the monthly quest at `Threshold` —
+  guarded (`Progress < Threshold`) against incrementing past it on repeated
+  triggers
+- Wired the subscription once, at the composition root in `Program.cs`,
+  right after `Persistence.LoadOrCreate()`:
+  `GameEngine.OnQuestCompleted += evt => MonthlyProgressTracker.HandleQuestCompleted(evt, gameState);`
+- Added `MonthlyProgressTrackerTests.cs` with four cases: progress
+  increments on a matching key, threshold reached completes the quest, no
+  double-counting past threshold on repeated triggers, and an unmapped key
+  is a no-op (asserted by calling the method directly with no exception
+  wrapping needed — xUnit fails a test automatically on any unhandled
+  exception, no `Assert.DoesNotThrow` equivalent needed)
+- Trimmed unused template `using`s from `GameEngineTests.cs` along the way
+- Confirmed `dotnet build` (0 warnings/errors) and `dotnet test` (19 passed)
+
+Files created/modified:
+- src\Lelleplanner.Core\QuestCompleted.cs
+- src\Lelleplanner.Core\GameEngine.cs
+- src\Lelleplanner.Core\MonthlyProgressTracker.cs
+- src\Lelleplanner.ConsoleApp\Program.cs
+- src\Lelleplanner.Tests\MonthlyProgressTrackerTests.cs
+- src\Lelleplanner.Tests\GameEngineTests.cs
+
+Next steps (Session 4 of Iteration 2): achievements + `MarkovFragments` —
+subscribe a second, independent handler to `QuestCompleted` that reacts to
+monthly-quest completions, tracks lifetime counts, completes achievements,
+and awards fragments.
+
 (Will append a short summary at the end of each completed session.)
