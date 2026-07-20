@@ -9,6 +9,11 @@ namespace Lelleplanner.Core
 
         public static event Action<QuestCompleted>? OnQuestCompleted;
 
+        public static void RaiseQuestCompleted(string questKey)
+        {
+            OnQuestCompleted?.Invoke(new QuestCompleted(questKey));
+        }
+
         public static void CompleteQuest(GameState gameState, string questKey)
         {
             Quest? quest = gameState.DailyQuests.FirstOrDefault(q => q.Key == questKey && !q.Completed)

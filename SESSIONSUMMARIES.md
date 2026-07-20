@@ -580,4 +580,68 @@ subscribe a second, independent handler to `QuestCompleted` that reacts to
 monthly-quest completions, tracks lifetime counts, completes achievements,
 and awards fragments.
 
+## Session 17 — 2026-07-20
+Summary: Iteration 2 session 4 — Achievements + `MarkovFragments`, subscribing
+to the same `QuestCompleted` event as `MonthlyProgressTracker`.
+
+Actions performed:
+- Resolved a design gap surfaced before writing any code: C# events can only
+  be invoked from their declaring class, so `MonthlyProgressTracker` (outside
+  `GameEngine`) had no way to raise `OnQuestCompleted` when a monthly quest
+  hit its threshold — meaning monthly-quest completions were silent and
+  nothing could react to them, despite PLAN.md describing `QuestCompleted` as
+  covering daily, weekly, *and* monthly clears. Considered three options
+  (a `GameEngine.RaiseQuestCompleted` passthrough method; extracting a
+  dedicated event-publisher class; skipping the event and chaining directly
+  in `Program.cs`) and went with the passthrough method — smallest change,
+  keeps one event pipeline, and matches the project's stated preference for
+  deferring bigger abstractions (like a real event bus) to Iteration 5's
+  DDD pass, once a second real motivating case exists
+- Added `GameEngine.RaiseQuestCompleted(string questKey)`, a public static
+  method that just invokes `OnQuestCompleted`; `MonthlyProgressTracker` calls
+  it right after completing a monthly quest
+- Added `Achievement.cs`: `Key`, `Title`, `Goal`, `LifetimeCount`,
+  `Threshold` (4, per VISION.md, kept as a field rather than hardcoded for
+  consistency with `MonthlyQuest`'s shape), `Completed` — mirrors
+  `MonthlyQuest` but lifetime-only, never reset by rollover
+- Added `AchievementTracker.cs`: a second independent static subscriber to
+  `QuestCompleted`, structurally parallel to `MonthlyProgressTracker` — maps
+  a monthly-quest key to its achievement key via a `Dictionary`, increments
+  `LifetimeCount`, completes the achievement and awards exactly 1
+  `MarkovFragment` at threshold, guarded against double-completion/-award
+- Added `GameState.Achievements` (via `InitializeAchievements()`) and
+  `GameState.MarkovFragments`; deliberately left both out of every rollover
+  method, since achievements and their fragment reward are lifetime, not
+  per-month
+- Wired the second subscription in `Program.cs`, alongside the existing one:
+  `GameEngine.OnQuestCompleted += evt => AchievementTracker.HandleQuestCompleted(evt, gameState);`
+- Traced the full cascade to confirm it terminates correctly: a daily quest
+  clearing fires `QuestCompleted`, which `MonthlyProgressTracker` handles and
+  (at threshold) re-raises `QuestCompleted` for the monthly quest — a
+  synchronous, nested (not concurrent) re-entry into the same event, which
+  `AchievementTracker` then handles in turn. Monthly-quest keys never appear
+  as source keys in `MonthlyQuestSources`, so the nested call can't cascade
+  further and the recursion terminates by construction
+- Added `AchievementTrackerTests.cs` with five cases, mirroring
+  `MonthlyProgressTrackerTests.cs`'s four (lifetime count increments on a
+  matching key, threshold reached completes the achievement, no
+  double-completion past threshold, an unmapped key is a no-op) plus one new
+  case specific to `AchievementTracker`: awards exactly 1 `MarkovFragment`,
+  not one per triggering call
+- Confirmed `dotnet build` (0 warnings/errors) and `dotnet test` (24 passed)
+
+Files created/modified:
+- src\Lelleplanner.Core\GameEngine.cs
+- src\Lelleplanner.Core\MonthlyProgressTracker.cs
+- src\Lelleplanner.Core\Achievement.cs
+- src\Lelleplanner.Core\AchievementTracker.cs
+- src\Lelleplanner.Core\GameState.cs
+- src\Lelleplanner.ConsoleApp\Program.cs
+- src\Lelleplanner.Tests\AchievementTrackerTests.cs
+- PLAN.md
+- CONTEXT.md
+
+Next steps (Session 5 of Iteration 2): wire monthly quests + achievements
+into `ConsoleRenderer`/`Program.cs`'s display.
+
 (Will append a short summary at the end of each completed session.)

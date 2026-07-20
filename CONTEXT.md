@@ -14,7 +14,7 @@ Domain-Driven Design and unit testing, not just to add features.
 
 <hr>
 
-## Where things stand (as of 2026-07-07)
+## Where things stand (as of 2026-07-20)
 - **MVP (v0.1) shipped and tagged.** Daily quests, Daily Coins, day rollover,
   console UI, and JSON persistence are all working end-to-end.
 - **Iteration 1 (v0.2): Testing + Weekly Quests is complete and tagged.**
@@ -25,8 +25,12 @@ Domain-Driven Design and unit testing, not just to add features.
   Design decided in session 13. Session 1 added `GameClock.GetGameMonthStart`.
   Session 2 wired `MonthStartDate`/`MonthlyQuests` (progress-counter based)
   into `GameState`. Session 3 added the `QuestCompleted` domain event and its
-  first subscriber, `MonthlyProgressTracker`. Achievements + `MarkovFragments`
-  (session 4) are next. Full scope and session breakdown are in PLAN.md's
+  first subscriber, `MonthlyProgressTracker`. Session 4 added `Achievement` +
+  `AchievementTracker` (a second independent `QuestCompleted` subscriber,
+  tracking lifetime counts and awarding `MarkovFragments`), plus
+  `GameEngine.RaiseQuestCompleted` so non-`GameEngine` code can raise the
+  event too. Wiring monthly quests + achievements into the console UI
+  (session 5) is next. Full scope and session breakdown are in PLAN.md's
   Iteration 2 section.
 - Repo folder name: `lelleplanner` (on this machine:
   `C:\Users\William\repos\lelleplanner`)
@@ -83,8 +87,8 @@ Domain-Driven Design and unit testing, not just to add features.
 <hr>
 
 ## Next step
-Session 4 of Iteration 2: Achievements + `MarkovFragments`, subscribing to
-the same `QuestCompleted` event — see PLAN.md's Iteration 2 session
+Session 5 of Iteration 2: wire monthly quests + achievements into
+`ConsoleRenderer`/`Program.cs` — see PLAN.md's Iteration 2 session
 breakdown.
 
 <hr>

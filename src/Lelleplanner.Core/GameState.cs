@@ -12,9 +12,11 @@ namespace Lelleplanner.Core
 
         public int DailyCoins { get; set; }
         public int WeeklyCoins { get; set; }
+        public int MarkovFragments { get; set; }
         public List<Quest> DailyQuests { get; set; }
         public List<Quest> WeeklyQuests { get; set; }
         public List<MonthlyQuest> MonthlyQuests { get; set; }
+        public List<Achievement> Achievements { get; set; }
 
         public GameState()
         {
@@ -23,9 +25,22 @@ namespace Lelleplanner.Core
             MonthStartDate = GameClock.GetGameMonthStart();
             DailyCoins = 0;
             WeeklyCoins = 0;
+            MarkovFragments = 0;
             DailyQuests = InitializeDefaultQuests();
             WeeklyQuests = InitializeWeeklyQuests();
             MonthlyQuests = InitializeMonthlyQuests();
+            Achievements = InitializeAchievements();
+        }
+
+        private List<Achievement> InitializeAchievements()
+        {
+            List<Achievement> achievements = new List<Achievement>
+            {
+                new Achievement("habits-maintained", "Habits Maintained!", "Clear 'Habit Handled!' 4 times", threshold: 4),
+                new Achievement("mythical-kitchen", "Mythical Kitchen", "Clear 'Plates For Days' 4 times", threshold: 4),
+                new Achievement("always-ready", "Always Ready!", "Clear 'Tidy Home, Tidy Life' 4 times", threshold: 4)
+            };
+            return achievements;
         }
 
         private List<Quest> InitializeDefaultQuests()

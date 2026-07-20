@@ -21,7 +21,10 @@ both `GameEngine.CompleteQuest` and `CompleteMetaQuest`, guarded against re-firi
 already-completed quest) and its first subscriber, `MonthlyProgressTracker`, which
 increments monthly-quest progress and completes it at threshold — subscribed once at the
 composition root in `Program.cs`, with `GameEngine` staying unaware monthly quests exist.
-Achievements (session 4) are next.
+Session 4 added the `Achievement` type, `GameEngine.RaiseQuestCompleted` (so non-`GameEngine`
+publishers can raise `QuestCompleted` too), `AchievementTracker` (a second independent
+subscriber, tracking lifetime counts and awarding `MarkovFragments`), and its test coverage.
+Wiring monthly quests + achievements into the console UI (session 5) is next.
 
 <hr>
 
@@ -297,11 +300,10 @@ through the existing pattern.
       clears, and each monthly quest completes exactly once per game-month (no
       double-counting a single clear, no re-completing after already complete this
       month)
-- [ ] `QuestCompleted` event exists; monthly-progress tracking and
+- [x] `QuestCompleted` event exists; monthly-progress tracking and
       achievement-checking are both independent subscribers to it, not direct calls
-      from `GameEngine` (event + monthly-progress subscriber done; achievement
-      subscriber is session 4)
-- [ ] Achievements track lifetime counts of monthly-quest clears, complete exactly
+      from `GameEngine`
+- [x] Achievements track lifetime counts of monthly-quest clears, complete exactly
       once ever, and award exactly 1 Markov Fragment each
 - [ ] Monthly quest list and achievement status render in the console UI
 - [ ] On a new game-month, monthly quest progress resets to 0; daily quests, weekly
