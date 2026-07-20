@@ -97,7 +97,7 @@ The Deckbox should be a list of a grand total of 48 cards.
 - Legion's Landing
 - Master of Dark Rites
 - Phyrexian Altar
-- Pitiless Plunder
+- Pitiless Plunderer
 - Sorin, Imperious Bloodlord
 - The Golden Throne
 - Carmen, Cruel Skymarcher

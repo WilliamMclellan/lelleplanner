@@ -24,6 +24,7 @@ namespace Lelleplanner.Core
                     if (quest.Progress >= quest.Threshold && !quest.Completed)
                     {
                         quest.Completed = true;
+                        GameEngine.RaiseQuestCompleted(quest.Key);
                     }
                 }
             }
