@@ -24,7 +24,10 @@ composition root in `Program.cs`, with `GameEngine` staying unaware monthly ques
 Session 4 added the `Achievement` type, `GameEngine.RaiseQuestCompleted` (so non-`GameEngine`
 publishers can raise `QuestCompleted` too), `AchievementTracker` (a second independent
 subscriber, tracking lifetime counts and awarding `MarkovFragments`), and its test coverage.
-Wiring monthly quests + achievements into the console UI (session 5) is next.
+Session 5 wired monthly quests + achievements into the console UI as read-only status
+displays (`ConsoleRenderer.RenderMonthlyList`/`RenderAchievements`), plus a `MarkovFragments`
+line on the banner. Manual month-rollover verification and the `v0.3` tag (session 6) are
+next.
 
 <hr>
 
@@ -305,7 +308,7 @@ through the existing pattern.
       from `GameEngine`
 - [x] Achievements track lifetime counts of monthly-quest clears, complete exactly
       once ever, and award exactly 1 Markov Fragment each
-- [ ] Monthly quest list and achievement status render in the console UI
+- [x] Monthly quest list and achievement status render in the console UI
 - [ ] On a new game-month, monthly quest progress resets to 0; daily quests, weekly
       quests, and achievements are unaffected (and vice versa — daily/weekly
       rollover doesn't touch monthly progress)
