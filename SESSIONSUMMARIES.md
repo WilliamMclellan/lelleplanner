@@ -687,4 +687,45 @@ month-boundary rollover against the real console app (mirroring session 12's
 daily/weekly verification), walk the full Definition of Done checklist, tag
 `v0.3`.
 
+## Session 19 — 2026-07-21
+Summary: Iteration 2 session 6 — manually verified the month-boundary
+rollover against the real console app, closing out the last open Definition
+of Done item for Iteration 2. No code changes; verification-only session,
+plus a real bug scare that turned out to be a testing artifact rather than
+an actual defect.
+
+Actions performed:
+- Backed up the real save file (`%LOCALAPPDATA%\Lelleplanner\gamestate.json`)
+- Investigated a discrepancy the user noticed while doing their own manual
+  rollover testing: staling only `MonthStartDate` appeared to reset nothing,
+  while staling `GameDate`, `WeekStartDate`, *and* `MonthStartDate` together
+  appeared to reset everything
+- Wrote a controlled "only `MonthStartDate` stale" fixture with nonzero
+  monthly quest progress (5/25, 2/4, 3/4) and current `GameDate`/
+  `WeekStartDate`, then ran the app: confirmed `MonthStartDate` advanced to
+  the current game-month and all three monthly quest progress counters
+  correctly reset to 0 — daily quests, weekly quests, and their coins were
+  completely unaffected
+- Root-caused the user's original observation: the save file on disk before
+  this session already had all three `MonthlyQuests` sitting at 0 progress,
+  so a 0→0 reset was indistinguishable from no reset happening at all: not a
+  bug, just an artifact of testing with a fixture that had nothing to reset
+- Restored the real save file exactly as it was found (untouched beyond this
+  session's temporary fixture)
+- Confirmed via user's own `dotnet test` run: 24 passed on a clean build
+- Checked off both remaining Iteration 2 Definition of Done items in
+  PLAN.md (month-rollover correctness, `dotnet test` passing) — every item
+  for this iteration is now checked
+- Updated PLAN.md's status line and Iteration 2 section header to "complete,
+  ready to tag v0.3", and CONTEXT.md's "where things stand"/"next step" to
+  match, pointing at tagging `v0.3` and then a design session for Iteration 3
+  (Currency + Shop)
+
+Files created/modified:
+- PLAN.md
+- CONTEXT.md
+
+Next steps: tag `v0.3` (user to do via git), then start Iteration 3
+(Currency + Shop) with a design-only session whenever ready.
+
 (Will append a short summary at the end of each completed session.)
