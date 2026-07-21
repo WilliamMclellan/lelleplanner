@@ -9,7 +9,7 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: Iteration 2 (v0.3) — Monthly Quests + Achievements — starting
+## Status: Iteration 2 (v0.3) — Monthly Quests + Achievements — complete, ready to tag v0.3
 
 **Progress:** v0.1 and v0.2 both shipped and tagged. Iteration 2 kicked off session 13
 as design-only (see [Iteration 2](#iteration-2-v03-monthly-quests--achievements) below).
@@ -26,8 +26,10 @@ publishers can raise `QuestCompleted` too), `AchievementTracker` (a second indep
 subscriber, tracking lifetime counts and awarding `MarkovFragments`), and its test coverage.
 Session 5 wired monthly quests + achievements into the console UI as read-only status
 displays (`ConsoleRenderer.RenderMonthlyList`/`RenderAchievements`), plus a `MarkovFragments`
-line on the banner. Manual month-rollover verification and the `v0.3` tag (session 6) are
-next.
+line on the banner. Session 6 manually verified the month-boundary rollover with a
+controlled fixture (nonzero monthly progress, stale `MonthStartDate` only): progress
+correctly reset to 0 and `MonthStartDate` advanced, with daily/weekly state untouched —
+every Definition of Done item for this iteration is now checked off.
 
 <hr>
 
@@ -249,7 +251,7 @@ abstraction upfront.
 
 <hr>
 
-## Iteration 2 (v0.3): Monthly Quests + Achievements
+## Iteration 2 (v0.3): Monthly Quests + Achievements — complete, ready to tag v0.3
 
 **Budget:** 4-8 hours.
 
@@ -309,10 +311,10 @@ through the existing pattern.
 - [x] Achievements track lifetime counts of monthly-quest clears, complete exactly
       once ever, and award exactly 1 Markov Fragment each
 - [x] Monthly quest list and achievement status render in the console UI
-- [ ] On a new game-month, monthly quest progress resets to 0; daily quests, weekly
+- [x] On a new game-month, monthly quest progress resets to 0; daily quests, weekly
       quests, and achievements are unaffected (and vice versa — daily/weekly
       rollover doesn't touch monthly progress)
-- [ ] `dotnet test` passes, covering the new `GameClock`, monthly-progress, and
+- [x] `dotnet test` passes, covering the new `GameClock`, monthly-progress, and
       achievement logic
 
 <hr>

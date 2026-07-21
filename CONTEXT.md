@@ -21,7 +21,7 @@ Domain-Driven Design and unit testing, not just to add features.
   Weekly quests, Weekly Coins, week rollover, and a shared daily/weekly
   rollover abstraction are all in, with test coverage and a manual,
   real-console verification of both rollover directions.
-- **Iteration 2 (v0.3): Monthly Quests + Achievements is in progress.**
+- **Iteration 2 (v0.3): Monthly Quests + Achievements is complete, tagged v0.3.**
   Design decided in session 13. Session 1 added `GameClock.GetGameMonthStart`.
   Session 2 wired `MonthStartDate`/`MonthlyQuests` (progress-counter based)
   into `GameState`. Session 3 added the `QuestCompleted` domain event and its
@@ -31,9 +31,11 @@ Domain-Driven Design and unit testing, not just to add features.
   `GameEngine.RaiseQuestCompleted` so non-`GameEngine` code can raise the
   event too. Session 5 wired monthly quests + achievements into the console
   UI as read-only status displays, plus a `MarkovFragments` banner line.
-  Manual month-rollover verification and tagging `v0.3` (session 6) are
-  next. Full scope and session breakdown are in PLAN.md's Iteration 2
-  section.
+  Session 6 manually verified the month-boundary rollover with a controlled
+  fixture (nonzero monthly progress, stale `MonthStartDate` only) — progress
+  correctly reset to 0 and daily/weekly state was unaffected. Every
+  Definition of Done item is checked off; full scope and session breakdown
+  are in PLAN.md's Iteration 2 section.
 - Repo folder name: `lelleplanner` (on this machine:
   `C:\Users\William\repos\lelleplanner`)
 - Git repository with a GitHub remote (`origin`); each session's work lands
@@ -89,10 +91,9 @@ Domain-Driven Design and unit testing, not just to add features.
 <hr>
 
 ## Next step
-Session 6 of Iteration 2 (Friday session): manually verify the month-boundary
-rollover against the real console app (mirroring session 12's daily/weekly
-rollover verification), walk the Definition of Done checklist, tag `v0.3` —
-see PLAN.md's Iteration 2 session breakdown.
+Tag `v0.3` (user to do via git), then start Iteration 3 (Currency + Shop)
+with a design-only session, mirroring how session 13 kicked off Iteration 2 —
+see PLAN.md's roadmap for the rough one-liner scope.
 
 <hr>
 
