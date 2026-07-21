@@ -33,7 +33,7 @@ while ( true )
         .ToList();
 
     ConsoleRenderer.RenderBanner(completedDailyQuestList.Count(), totalDailyQuestList.Count(), gameState.DailyCoins,
-        completedWeeklyQuestList.Count(), totalWeeklyQuestList.Count(), gameState.WeeklyCoins);
+        completedWeeklyQuestList.Count(), totalWeeklyQuestList.Count(), gameState.WeeklyCoins, gameState.MarkovFragments);
 
     List<(Quest Quest, string Label)> activeQuestListWithLabels = activeDailyQuestList
         .Select(quest => (quest, "Daily"))
@@ -46,6 +46,8 @@ while ( true )
         .ToList();
 
     ConsoleRenderer.RenderQuestList(activeQuestListWithLabels, completedQuestListWithLabels);
+    ConsoleRenderer.RenderMonthlyList(gameState.MonthlyQuests);
+    ConsoleRenderer.RenderAchievements(gameState.Achievements);
 
     if (!GameEngine.HasRemainingQuests(activeQuestList))
     {

@@ -644,4 +644,47 @@ Files created/modified:
 Next steps (Session 5 of Iteration 2): wire monthly quests + achievements
 into `ConsoleRenderer`/`Program.cs`'s display.
 
+## Session 18 — 2026-07-21
+Summary: Iteration 2 session 5 — wired monthly quests + achievements into the
+console UI as read-only status displays, closing the last code-facing
+Definition of Done item for this iteration.
+
+Actions performed:
+- `ConsoleRenderer.RenderBanner`: added a `markovFragments` parameter and a
+  third banner line, mirroring the existing Daily/Weekly Coins lines
+- Added `ConsoleRenderer.RenderMonthlyList(List<MonthlyQuest>)` and
+  `RenderAchievements(List<Achievement>)`: since monthly quests and
+  achievements complete automatically as a side effect of
+  `MonthlyProgressTracker`/`AchievementTracker` reacting to `QuestCompleted`
+  (not by the player picking a number), they're deliberately kept out of the
+  existing numbered active/completed quest list and rendered as their own
+  read-only `[progress/threshold]`/`[COMPLETED]` sections
+- Wired both new render calls into `Program.cs`'s main loop, alongside the
+  existing `RenderQuestList` call, and passed `gameState.MarkovFragments`
+  into `RenderBanner`
+- Caught and fixed a real bug during review: the Markov Fragments banner
+  line initially read `{markovFragments}/4`, a cap that didn't match any
+  defined vision mechanic — 3 achievements each award exactly 1 fragment, so
+  the true lifetime max is 3, not 4 (the `4` was the achievement threshold —
+  monthly-quest clears needed *per achievement* — bleeding into the wrong
+  number). Confirmed no Shop item exists that sells fragments before fixing
+  the display to `/3`
+- Confirmed `dotnet build` (0 warnings/errors) and `dotnet test` (24 passed)
+- Manually smoke-tested via `dotnet run`: confirmed the Monthly Quests and
+  Achievements sections render correctly against real save-file state, and
+  the Markov Fragments line shows `/3`
+- Checked off PLAN.md's "Monthly quest list and achievement status render in
+  the console UI" Definition of Done item
+
+Files created/modified:
+- src\Lelleplanner.ConsoleApp\ConsoleRenderer.cs
+- src\Lelleplanner.ConsoleApp\Program.cs
+- PLAN.md
+- CONTEXT.md
+
+Next steps (Session 6 of Iteration 2, Friday session): manually verify the
+month-boundary rollover against the real console app (mirroring session 12's
+daily/weekly verification), walk the full Definition of Done checklist, tag
+`v0.3`.
+
 (Will append a short summary at the end of each completed session.)
