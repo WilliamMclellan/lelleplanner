@@ -728,4 +728,51 @@ Files created/modified:
 Next steps: tag `v0.3` (user to do via git), then start Iteration 3
 (Currency + Shop) with a design-only session whenever ready.
 
+## Session 20 — 2026-07-22
+Summary: Closed out Iteration 2's docs (which had gone stale relative to the
+actual merged state), added its LEARNINGS.md section, and kicked off
+Iteration 3 (Currency + Shop) as a design-only session.
+
+Actions performed:
+- Confirmed `v0.3` is tagged and merged into `master` (PR #19, merging
+  `sessions/session18/iteration-2-check-dod`) — session had opened questioning
+  this since an earlier branch's copy of the docs still described Iteration 2
+  as in-progress
+- Fixed stale wording in PLAN.md ("ready to tag v0.3" -> "tagged v0.3") and
+  CONTEXT.md (stale "as of" date, stale "next step" pointing at tagging
+  instead of Iteration 3, stale "master up to date through v0.1" -> v0.3)
+- Added the Iteration 2 section to LEARNINGS.md: domain events for decoupling
+  publisher from subscriber, the "events can only be raised from their
+  declaring class" gotcha behind `GameEngine.RaiseQuestCompleted`, progress
+  counters vs. toggles as a genuinely different shape (not shared code),
+  lifetime state deliberately excluded from every rollover, and
+  guard-by-construction vs. guard-by-check
+- Resolved three open design questions for Iteration 3 before writing its
+  PLAN.md section: (1) `Missing Eddie Card`/`Daddy Markov [Serialized]` are
+  deferred to Iteration 4, since both depend on the not-yet-built Deckbox and
+  would otherwise ship half-working; (2) Shop will call
+  `GameEngine.CompleteQuest` directly rather than through a new interface,
+  since `GameEngine` is Core's one real implementation today; (3) a real gap
+  found while tracing `Shortcut!`'s flow — full-clear detection currently
+  lives only in `Program.cs`'s main loop (`Program.cs:83-87`), so a Shop
+  purchase completing the last two daily quests wouldn't trigger
+  `daily-quest-clear`/the Daily Coin — resolved by folding that detection
+  into `GameEngine.CompleteQuest` itself
+- Wrote the full Iteration 3 section into PLAN.md (scope, "where it'll get
+  interesting" — retiring `Program.cs`'s bool-tracking celebration check in
+  favor of subscribing to `QuestCompleted`, session breakdown, Definition of
+  Done) and updated the roadmap's item 3/4 one-liners to match the deferred-
+  items decision
+- Updated CONTEXT.md's "where things stand" and "next step" to point at
+  Iteration 3 session 2
+
+Files created/modified:
+- CONTEXT.md
+- PLAN.md
+- LEARNINGS.md
+- SESSIONSUMMARIES.md
+
+Next steps (Session 2 of Iteration 3): `ShopItem` type + `GameState.ShopItems`,
+seeded with `Shortcut!` and `Cheat Day!` (stock counts included).
+
 (Will append a short summary at the end of each completed session.)

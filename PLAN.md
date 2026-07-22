@@ -9,7 +9,7 @@ full end-state (that's [VISION.md](VISION.md)).
 
 <hr>
 
-## Status: Iteration 2 (v0.3) — Monthly Quests + Achievements — complete, ready to tag v0.3
+## Status: Iteration 3 (v0.4) — Currency + Shop — starting
 
 **Progress:** v0.1 and v0.2 both shipped and tagged. Iteration 2 kicked off session 13
 as design-only (see [Iteration 2](#iteration-2-v03-monthly-quests--achievements) below).
@@ -29,7 +29,17 @@ displays (`ConsoleRenderer.RenderMonthlyList`/`RenderAchievements`), plus a `Mar
 line on the banner. Session 6 manually verified the month-boundary rollover with a
 controlled fixture (nonzero monthly progress, stale `MonthStartDate` only): progress
 correctly reset to 0 and `MonthStartDate` advanced, with daily/weekly state untouched —
-every Definition of Done item for this iteration is now checked off.
+every Definition of Done item for this iteration is now checked off. Tagged `v0.3`.
+
+**Progress (Iteration 3):** Iteration 3 kicked off session 19 as design-only, resolving
+three open questions before scaffolding: the two Deckbox-dependent shop items (`Missing
+Eddie Card`, `Daddy Markov [Serialized]`) are deferred to Iteration 4 rather than shipped
+half-working; Shop calls `GameEngine.CompleteQuest` directly rather than through a new
+interface, matching how the rest of `Core` already calls its static classes; and the
+"did this just fully clear the day/week" check is moving from `Program.cs`'s main loop
+into `GameEngine.CompleteQuest` itself, so any caller (manual entry or a Shop purchase)
+gets consistent full-clear detection. See the [Iteration 3](#iteration-3-v04-currency--shop)
+section below for full scope and session breakdown.
 
 <hr>
 
@@ -319,6 +329,73 @@ through the existing pattern.
 
 <hr>
 
+## Iteration 3 (v0.4): Currency + Shop
+
+**Budget:** 4-8 hours.
+
+### Scope
+- `ShopItem` type: `Key`, `Title`, `Description`, `CostAmount`, `CostCurrency` (an enum —
+  `DailyCoins`/`WeeklyCoins`/`MarkovFragments`), `Stock`
+- `GameState.ShopItems`, seeded with the two Deckbox-independent items from VISION.md:
+  `Shortcut!` (1 Weekly Coin, 999 stock) and `Cheat Day!` (1 Weekly Coin, 999 stock).
+  `Missing Eddie Card` and `Daddy Markov [Serialized]` are deliberately deferred to
+  Iteration 4 (Deckbox) — both only make sense once there's a card pool to draw from, so
+  shipping them now would mean half-working purchases
+- `Shop.Purchase(GameState, itemKey)`: validates `Stock > 0` and balance `>=` cost,
+  deducts currency + decrements stock, then applies the item's purchase effect
+- Purchase effects wired via a key-to-effect lookup (mirroring
+  `MonthlyProgressTracker`/`AchievementTracker`'s dictionary pattern) rather than a
+  growing if/else: `Shortcut!`'s effect calls `GameEngine.CompleteQuest` for
+  `walk-for-life` and `smartypants-huh`; `Cheat Day!` has no game-state effect
+  (flavor-only — "go buy snacks for 100 SEK" per VISION.md)
+- Shop calls `GameEngine.CompleteQuest` directly — no interface/seam introduced, since
+  `GameEngine` is already the one real implementation `Core` has, matching how
+  `Persistence` and other static classes are called today. An interface is deferred to
+  Iteration 5's DDD pass, once there's a second real implementation motivating one
+- A refactor surfaced while designing this: the "did this just fully clear the day/week"
+  check (and the resulting `CompleteDailyQuest`/`CompleteWeeklyQuest` call) currently
+  lives in `Program.cs`'s main loop — only reachable after a manually-typed quest number.
+  Folding it into `GameEngine.CompleteQuest` itself means Shop (or any future caller)
+  gets full-clear detection automatically, instead of silently bypassing it
+
+### Where it'll get interesting
+Once full-clear detection moves inside `GameEngine.CompleteQuest`, `Program.cs` no
+longer knows ahead of time whether a completion is about to trigger a celebration — but
+it doesn't need to guess: `QuestCompleted` already fires when the
+`daily-quest-clear`/`weekly-quest-clear` meta-quests complete (via `CompleteMetaQuest`),
+so `Program.cs` can subscribe to that event and trigger the celebration renderer from
+the event itself, retiring the current bool-tracking-then-recheck dance in favor of the
+domain event pipeline Iteration 2 already built. A good test of whether that
+abstraction pays for itself outside its original use case.
+
+### Suggested session breakdown
+| Session | Focus |
+|---|---|
+| 1 | Design: scope Iteration 3, resolve open questions (this session) |
+| 2 | `ShopItem` type + `GameState.ShopItems` (2 items, stock counts) |
+| 3 | `Shop.Purchase`: currency/stock validation + deduction, tests |
+| 4 | Fold full-clear detection into `GameEngine.CompleteQuest`; update `Program.cs` to subscribe to `QuestCompleted` for celebrations instead of the manual check |
+| 5 | Wire `Shortcut!`'s purchase effect (calls `CompleteQuest` for its two quests) + tests for the cascade (does it correctly trigger `daily-quest-clear`/the Daily Coin if those were the last two remaining) |
+| 6 | Wire Shop into `ConsoleRenderer`/`Program.cs` (item list, buy prompt) |
+| 7 (Fri) | Manual test the full purchase flow + Definition of Done walkthrough, tag `v0.4` |
+
+### Definition of done
+- [ ] `Shop.Purchase` validates stock and currency balance, rejecting purchases that
+      fail either check with no side effects
+- [ ] Buying `Shortcut!` deducts 1 Weekly Coin, decrements its stock, and completes
+      `walk-for-life`/`smartypants-huh` — including correctly triggering
+      `daily-quest-clear`/the Daily Coin if those were the last two remaining
+- [ ] Buying `Cheat Day!` deducts 1 Weekly Coin and decrements its stock (flavor-only,
+      no further game effect)
+- [ ] `GameEngine.CompleteQuest`'s full-clear detection behaves identically whether
+      triggered by manual quest entry or by a Shop purchase — no logic duplicated
+      between `GameEngine` and `Program.cs`
+- [ ] Shop renders in the console UI with item name/cost/stock, plus a purchase prompt
+- [ ] `dotnet test` passes, covering `Shop.Purchase`'s validation/effects and the
+      refactored full-clear detection
+
+<hr>
+
 ## Roadmap (post-MVP iterations)
 Rough, one-liner per iteration — each gets its own detailed planning pass
 when we actually get there, not now.
@@ -333,13 +410,16 @@ when we actually get there, not now.
    moment to introduce a lightweight domain event
    (`QuestCompleted`) so "what happened" and "what reacts to it" (currency,
    achievements) decouple.
-3. **Currency + Shop** (4–8h) — all 4 shop items; stock counts; `Shortcut!`
-   needs to reach back into the quest board to auto-complete two quests —
-   a good excuse to keep Shop decoupled from the quest board via a small
-   interface rather than a direct dependency.
+3. **Currency + Shop** (4–8h) — `Shortcut!` and `Cheat Day!` (the two shop items that
+   don't depend on the Deckbox); stock counts; `Shortcut!` reaches back into the quest
+   board via `GameEngine.CompleteQuest` directly to auto-complete two quests, which
+   surfaces a real refactor: folding full-clear detection into `CompleteQuest` itself
+   rather than leaving it in `Program.cs`. `Missing Eddie Card`/`Daddy Markov` are
+   deferred to Iteration 4, once the Deckbox exists for them to draw from.
 4. **Deckbox** (4–8h) — 48-card pool, random draw excluding Edgar Markov,
-   dedicated Daddy Markov path, a collection view. Draws are without
-   replacement and no duplicates occur — 47 purchases of "Missing Eddie
+   dedicated Daddy Markov path, a collection view, plus wiring `Missing Eddie
+   Card`/`Daddy Markov [Serialized]` into the Shop built in Iteration 3. Draws are
+   without replacement and no duplicates occur — 47 purchases of "Missing Eddie
    Card" gets every non-Markov card exactly once, matching the "47 in
    stock" figure.
 5. **DDD tactical pass** (8–16h) — the deliberate "rehearse DDD" iteration:
