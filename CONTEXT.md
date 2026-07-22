@@ -14,7 +14,7 @@ Domain-Driven Design and unit testing, not just to add features.
 
 <hr>
 
-## Where things stand (as of 2026-07-20)
+## Where things stand (as of 2026-07-22)
 - **MVP (v0.1) shipped and tagged.** Daily quests, Daily Coins, day rollover,
   console UI, and JSON persistence are all working end-to-end.
 - **Iteration 1 (v0.2): Testing + Weekly Quests is complete and tagged.**
@@ -36,6 +36,15 @@ Domain-Driven Design and unit testing, not just to add features.
   correctly reset to 0 and daily/weekly state was unaffected. Every
   Definition of Done item is checked off; full scope and session breakdown
   are in PLAN.md's Iteration 2 section.
+- **Iteration 3 (v0.4): Currency + Shop is starting.** Session 19 was
+  design-only, resolving three open questions: the two Deckbox-dependent shop
+  items (`Missing Eddie Card`, `Daddy Markov [Serialized]`) are deferred to
+  Iteration 4; Shop will call `GameEngine.CompleteQuest` directly rather than
+  through a new interface; and full-clear detection is moving from
+  `Program.cs`'s main loop into `GameEngine.CompleteQuest` itself, so a Shop
+  purchase (like `Shortcut!`) triggers `daily-quest-clear`/the Daily Coin
+  correctly if it clears the last remaining quests. Full scope and session
+  breakdown are in PLAN.md's Iteration 3 section.
 - Repo folder name: `lelleplanner` (on this machine:
   `C:\Users\William\repos\lelleplanner`)
 - Git repository with a GitHub remote (`origin`); each session's work lands
@@ -91,13 +100,13 @@ Domain-Driven Design and unit testing, not just to add features.
 <hr>
 
 ## Next step
-Tag `v0.3` (user to do via git), then start Iteration 3 (Currency + Shop)
-with a design-only session, mirroring how session 13 kicked off Iteration 2 —
-see PLAN.md's roadmap for the rough one-liner scope.
+Session 2 of Iteration 3: `ShopItem` type + `GameState.ShopItems`, seeded
+with `Shortcut!` and `Cheat Day!` (stock counts included) — see PLAN.md's
+Iteration 3 session breakdown.
 
 <hr>
 
 ## Before you continue elsewhere
 This repo has a GitHub remote (`origin`) and `master` is up to date through
-the `v0.1` tag. `git clone` the remote on another machine to pick up where
+the `v0.3` tag. `git clone` the remote on another machine to pick up where
 this left off.
